@@ -36,7 +36,7 @@ $menuKonten = [
     [
         'url' => 'admin/footer/index.php',
         'match' => 'admin/footer',
-        'icon' => 'fa-window-minimize',
+        'icon' => 'fa-list-alt',
         'label' => 'Footer',
     ],
 ];
@@ -70,8 +70,8 @@ $menuUnit = [
 
 $navClass = static function (bool $active): string {
     return $active
-        ? 'flex items-center gap-3 rounded-lg bg-emerald-50 px-3 py-2.5 text-sm font-semibold text-az-green'
-        : 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900';
+        ? 'flex min-h-10 items-center gap-3 rounded-lg bg-emerald-50 px-3 py-2.5 text-sm font-semibold text-az-green transition-colors'
+        : 'flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900';
 };
 ?>
 <!DOCTYPE html>
@@ -101,6 +101,15 @@ $navClass = static function (bool $active): string {
         }
     </script>
 
+    <script>
+        try {
+            if (localStorage.getItem('admin-sidebar-closed') === 'true') {
+                document.documentElement.classList.add('admin-sidebar-closed');
+            }
+        } catch (error) {
+        }
+    </script>
+
     <link
         rel="stylesheet"
         href="<?= base_url('assets/font-awesome/css/font-awesome.min.css') ?>"
@@ -120,109 +129,97 @@ $navClass = static function (bool $active): string {
 <body class="min-h-screen bg-slate-50 text-slate-700 antialiased">
     <div
         id="mobileAdminBackdrop"
-        class="fixed inset-0 z-40 hidden bg-slate-900/40 lg:hidden"
+        class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"
     ></div>
 
     <aside
         id="adminSidebar"
-        class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white transition-all duration-200 lg:translate-x-0"
+        class="fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 bg-white"
     >
+        <button
+            type="button"
+            id="adminSidebarToggle"
+            aria-label="Tutup sidebar"
+            aria-expanded="true"
+            title="Tutup sidebar"
+        >
+            <i
+                id="adminSidebarToggleIcon"
+                class="fa fa-angle-left"
+                aria-hidden="true"
+            ></i>
+        </button>
+
         <div
             id="adminSidebarHeader"
-            class="flex h-20 items-center justify-between border-b border-slate-100 px-5"
+            class="flex h-20 items-center border-b border-slate-100 px-5"
         >
             <a
                 href="<?= base_url('admin/dashboard/index.php') ?>"
-                class="flex min-w-0 items-center gap-3"
+                class="min-w-0"
                 title="Dashboard Admin"
             >
-                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-az-green text-sm font-bold text-white">
-                    AZ
-                </span>
+                <strong class="block truncate text-sm font-semibold text-slate-900">
+                    Az-Zahra Perwira
+                </strong>
 
-                <span
-                    class="min-w-0"
-                    data-sidebar-label
-                >
-                    <strong class="block truncate text-sm font-semibold text-slate-900">
-                        Az-Zahra Perwira
-                    </strong>
-
-                    <small class="mt-0.5 block text-xs text-slate-500">
-                        Admin Website
-                    </small>
-                </span>
+                <small class="mt-0.5 block text-xs text-slate-500">
+                    Admin Website
+                </small>
             </a>
-
-            <button
-                type="button"
-                id="mobileAdminClose"
-                class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 lg:hidden"
-                aria-label="Tutup menu"
-            >
-                <i
-                    class="fa fa-times"
-                    aria-hidden="true"
-                ></i>
-            </button>
         </div>
 
         <nav
-            id="adminSidebarNav"
             class="flex-1 overflow-y-auto px-4 py-5"
             aria-label="Navigasi admin"
         >
             <div class="mb-6">
-                <p
-                    class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400"
-                    data-sidebar-label
-                >
+                <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                     Utama
                 </p>
 
+                <?php $dashboardActive = $isActive('admin/dashboard'); ?>
+
                 <a
                     href="<?= base_url('admin/dashboard/index.php') ?>"
-                    class="<?= $navClass($isActive('admin/dashboard')) ?>"
-                    data-sidebar-link
+                    class="<?= $navClass($dashboardActive) ?>"
                     title="Dashboard"
                 >
-                    <span class="flex w-5 shrink-0 justify-center text-slate-500">
+                    <span class="flex w-5 shrink-0 justify-center <?= $dashboardActive ? 'text-az-green' : 'text-slate-400' ?>">
                         <i
                             class="fa fa-th-large"
                             aria-hidden="true"
                         ></i>
                     </span>
 
-                    <span data-sidebar-label>
+                    <span>
                         Dashboard
                     </span>
                 </a>
             </div>
 
             <div class="mb-6">
-                <p
-                    class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400"
-                    data-sidebar-label
-                >
+                <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                     Konten Website
                 </p>
 
                 <div class="space-y-1">
                     <?php foreach ($menuKonten as $menu): ?>
+                        <?php $menuActive = $isActive($menu['match']); ?>
+
                         <a
                             href="<?= base_url($menu['url']) ?>"
-                            class="<?= $navClass($isActive($menu['match'])) ?>"
-                            data-sidebar-link
+                            class="<?= $navClass($menuActive) ?>"
                             title="<?= esc($menu['label'], 'attr') ?>"
                         >
-                            <span class="flex w-5 shrink-0 justify-center text-slate-500">
+                            <span class="flex w-5 shrink-0 justify-center <?= $menuActive ? 'text-az-green' : 'text-slate-400' ?>">
                                 <i
                                     class="fa <?= esc($menu['icon'], 'attr') ?>"
                                     aria-hidden="true"
                                 ></i>
                             </span>
 
-                            <span data-sidebar-label>
+                            <span>
                                 <?= esc($menu['label']) ?>
                             </span>
                         </a>
@@ -231,29 +228,27 @@ $navClass = static function (bool $active): string {
             </div>
 
             <div>
-                <p
-                    class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400"
-                    data-sidebar-label
-                >
+                <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                     Unit Pendidikan
                 </p>
 
                 <div class="space-y-1">
                     <?php foreach ($menuUnit as $menu): ?>
+                        <?php $menuActive = $isActive($menu['match']); ?>
+
                         <a
                             href="<?= base_url($menu['url']) ?>"
-                            class="<?= $navClass($isActive($menu['match'])) ?>"
-                            data-sidebar-link
+                            class="<?= $navClass($menuActive) ?>"
                             title="<?= esc($menu['label'], 'attr') ?>"
                         >
-                            <span class="flex w-5 shrink-0 justify-center text-slate-500">
+                            <span class="flex w-5 shrink-0 justify-center <?= $menuActive ? 'text-az-green' : 'text-slate-400' ?>">
                                 <i
                                     class="fa <?= esc($menu['icon'], 'attr') ?>"
                                     aria-hidden="true"
                                 ></i>
                             </span>
 
-                            <span data-sidebar-label>
+                            <span>
                                 <?= esc($menu['label']) ?>
                             </span>
                         </a>
@@ -262,44 +257,34 @@ $navClass = static function (bool $active): string {
             </div>
         </nav>
 
-        <div
-            id="adminSidebarBottom"
-            class="border-t border-slate-100 p-4"
-        >
+        <div class="border-t border-slate-100 p-4">
             <a
                 href="<?= site_url('home/beranda') ?>"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="mb-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                data-sidebar-link
+                class="mb-3 flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
                 title="Lihat Website"
             >
-                <span class="flex w-5 shrink-0 justify-center text-slate-500">
+                <span class="flex w-5 shrink-0 justify-center text-slate-400">
                     <i
                         class="fa fa-external-link"
                         aria-hidden="true"
                     ></i>
                 </span>
 
-                <span data-sidebar-label>
+                <span>
                     Lihat Website
                 </span>
             </a>
 
-            <div
-                id="adminSidebarUser"
-                class="flex items-center gap-3 rounded-lg bg-slate-50 p-3"
-            >
+            <div class="flex items-center gap-3 rounded-lg bg-slate-50 p-3">
                 <img
                     src="<?= base_url('assets/img/profile/profileAdmin.png') ?>"
                     alt="Admin"
                     class="h-9 w-9 shrink-0 rounded-full object-cover"
                 >
 
-                <div
-                    class="min-w-0 flex-1"
-                    data-sidebar-label
-                >
+                <div class="min-w-0 flex-1">
                     <strong class="block truncate text-sm font-semibold text-slate-900">
                         <?= esc($namaAdmin) ?>
                     </strong>
@@ -314,7 +299,6 @@ $navClass = static function (bool $active): string {
                     class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-500 hover:bg-white hover:text-red-600"
                     title="Logout"
                     aria-label="Logout"
-                    data-sidebar-secondary
                 >
                     <i
                         class="fa fa-sign-out"
@@ -327,41 +311,25 @@ $navClass = static function (bool $active): string {
 
     <div
         id="adminContent"
-        class="min-h-screen transition-all duration-200 lg:ml-72"
+        class="min-h-screen"
     >
         <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
             <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-                <div class="flex min-w-0 items-center gap-3">
-                    <button
-                        type="button"
-                        id="adminSidebarToggle"
-                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-                        aria-label="Buka menu"
-                        title="Buka menu"
-                    >
-                        <i
-                            id="adminSidebarToggleIcon"
-                            class="fa fa-bars"
-                            aria-hidden="true"
-                        ></i>
-                    </button>
+                <div class="min-w-0">
+                    <p class="hidden text-xs font-medium text-slate-400 sm:block">
+                        Admin Website
+                    </p>
 
-                    <div class="min-w-0">
-                        <p class="hidden text-xs font-medium text-slate-400 sm:block">
-                            Admin Website
-                        </p>
-
-                        <h1 class="truncate text-lg font-semibold text-slate-900 sm:text-xl">
-                            <?= esc($judulHalaman) ?>
-                        </h1>
-                    </div>
+                    <h1 class="truncate text-lg font-semibold text-slate-900 sm:text-xl">
+                        <?= esc($judulHalaman) ?>
+                    </h1>
                 </div>
 
                 <div class="relative">
                     <button
                         type="button"
                         id="adminProfileButton"
-                        class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+                        class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-50"
                         aria-label="Buka menu akun"
                         aria-expanded="false"
                     >
@@ -462,4 +430,5 @@ $navClass = static function (bool $active): string {
         </main>
     </div>
 </body>
+
 </html>
