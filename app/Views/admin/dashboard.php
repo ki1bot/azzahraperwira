@@ -6,15 +6,15 @@ $totalAktif = (int) ($totalAktif ?? 0);
 $totalHalamanDinamis = (int) ($totalHalamanDinamis ?? 0);
 
 $deskripsiHalaman = [
-    'beranda' => 'Atur banner utama, brosur, dan video profil yang tampil di halaman depan.',
+    'beranda' => 'Atur banner utama, brosur, dan video profil pada halaman depan.',
     'profile' => 'Perbarui profil yayasan, visi, misi, dan struktur organisasi.',
-    'tenaga-pengajar' => 'Kelola daftar tenaga pengajar beserta kategori, pendidikan, jabatan, dan foto.',
-    'unit-kb-tk' => 'Perbarui informasi program, fasilitas, ekstrakurikuler, dan galeri KB/TK.',
+    'tenaga-pengajar' => 'Kelola data tenaga pengajar, pendidikan, jabatan, dan foto.',
+    'unit-kb-tk' => 'Perbarui program, fasilitas, ekstrakurikuler, dan galeri KB/TK.',
     'unit-tpq' => 'Perbarui informasi TPQ, RTQ, program, kegiatan, dan galeri.',
     'unit-dc' => 'Perbarui informasi Daycare, program, kegiatan, dan galeri.',
     'unit-lansia' => 'Perbarui informasi program, kegiatan, dan galeri Unit Lansia.',
-    'informasi' => 'Kelola pengumuman, berita, brosur, dan informasi terbaru untuk pengunjung.',
-    'footer' => 'Atur identitas, alamat, nomor WhatsApp, media sosial, dan copyright.',
+    'informasi' => 'Kelola pengumuman, berita, brosur, dan informasi terbaru.',
+    'footer' => 'Atur identitas, alamat, WhatsApp, media sosial, dan copyright.',
 ];
 
 $ikonHalaman = [
@@ -32,16 +32,43 @@ $ikonHalaman = [
 $adminHalamanUrl = static function (string $kode): string {
     return base_url('admin/' . trim($kode, '/') . '/index.php');
 };
+
+$statCards = [
+    [
+        'label' => 'Halaman Dikelola',
+        'value' => count($daftarHalaman),
+        'note' => 'bagian website',
+        'icon' => 'fa-files-o',
+    ],
+    [
+        'label' => 'Total Konten',
+        'value' => $totalKonten,
+        'note' => 'data tersimpan',
+        'icon' => 'fa-list-alt',
+    ],
+    [
+        'label' => 'Konten Aktif',
+        'value' => $totalAktif,
+        'note' => 'sedang ditampilkan',
+        'icon' => 'fa-check-circle-o',
+    ],
+    [
+        'label' => 'Halaman Dinamis',
+        'value' => $totalHalamanDinamis,
+        'note' => 'bisa tambah data',
+        'icon' => 'fa-plus-square-o',
+    ],
+];
 ?>
 
-<div class="dashboard-intro">
+<section class="mb-6 flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
     <div>
-        <span class="section-kicker">Ringkasan</span>
-        <h2>Kelola website dari satu tempat</h2>
-        <p>
-            Pilih bagian website yang ingin diperbarui.
-            Nama menu dan form dibuat mengikuti isi website agar lebih
-            mudah dipahami tanpa perlu mengetahui ID atau kode database.
+        <p class="mb-1 text-sm font-medium text-az-green">Dashboard</p>
+        <h2 class="text-2xl font-semibold tracking-tight text-slate-900">
+            Ringkasan Website
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+            Pilih halaman yang ingin diperbarui. Semua bagian dikelola dengan nama yang sama seperti yang tampil di website.
         </p>
     </div>
 
@@ -49,158 +76,131 @@ $adminHalamanUrl = static function (string $kode): string {
         href="<?= site_url('home/beranda') ?>"
         target="_blank"
         rel="noopener noreferrer"
-        class="btn btn-secondary"
+        class="inline-flex h-10 items-center justify-center gap-2 self-start rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
     >
         <i class="fa fa-external-link" aria-hidden="true"></i>
         Lihat Website
     </a>
+</section>
+
+<div class="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <?php foreach ($statCards as $stat): ?>
+        <article class="rounded-xl border border-slate-200 bg-white p-5">
+            <div class="mb-4 flex items-center justify-between">
+                <span class="text-sm font-medium text-slate-500">
+                    <?= esc($stat['label']) ?>
+                </span>
+
+                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-az-green">
+                    <i class="fa <?= esc($stat['icon'], 'attr') ?>" aria-hidden="true"></i>
+                </span>
+            </div>
+
+            <div class="flex items-baseline gap-2">
+                <strong class="text-3xl font-semibold tracking-tight text-slate-900">
+                    <?= (int) $stat['value'] ?>
+                </strong>
+                <span class="text-xs text-slate-400">
+                    <?= esc($stat['note']) ?>
+                </span>
+            </div>
+        </article>
+    <?php endforeach; ?>
 </div>
 
-<div class="stat-grid">
-    <article class="stat-card">
-        <span class="stat-icon">
-            <i class="fa fa-files-o" aria-hidden="true"></i>
-        </span>
-
-        <div>
-            <span class="stat-label">Halaman Dikelola</span>
-            <strong><?= count($daftarHalaman) ?></strong>
-            <small>bagian website</small>
-        </div>
-    </article>
-
-    <article class="stat-card">
-        <span class="stat-icon">
-            <i class="fa fa-list-alt" aria-hidden="true"></i>
-        </span>
-
-        <div>
-            <span class="stat-label">Total Konten</span>
-            <strong><?= $totalKonten ?></strong>
-            <small>data tersimpan</small>
-        </div>
-    </article>
-
-    <article class="stat-card">
-        <span class="stat-icon">
-            <i class="fa fa-check-circle-o" aria-hidden="true"></i>
-        </span>
-
-        <div>
-            <span class="stat-label">Konten Aktif</span>
-            <strong><?= $totalAktif ?></strong>
-            <small>sedang ditampilkan</small>
-        </div>
-    </article>
-
-    <article class="stat-card">
-        <span class="stat-icon">
-            <i class="fa fa-plus-square-o" aria-hidden="true"></i>
-        </span>
-
-        <div>
-            <span class="stat-label">Data Dinamis</span>
-            <strong><?= $totalHalamanDinamis ?></strong>
-            <small>halaman bisa tambah data</small>
-        </div>
-    </article>
-</div>
-
-<div class="section-heading section-heading-row">
-    <div>
-        <span class="section-kicker">Menu Konten</span>
-        <h2>Pilih halaman yang ingin dikelola</h2>
-        <p>
-            Setiap kartu menunjukkan jumlah data dan status konten
-            pada halaman tersebut.
+<section>
+    <div class="mb-4">
+        <h2 class="text-lg font-semibold text-slate-900">
+            Kelola Konten
+        </h2>
+        <p class="mt-1 text-sm text-slate-500">
+            Buka halaman yang ingin Anda ubah.
         </p>
     </div>
-</div>
 
-<?php if (! empty($daftarHalaman)): ?>
-    <div class="page-grid">
-        <?php foreach ($daftarHalaman as $kode => $nama): ?>
-            <?php
-            $ringkasan = $ringkasanHalaman[$kode] ?? [
-                'total' => 0,
-                'aktif' => 0,
-                'nonaktif' => 0,
-                'boleh_tambah' => false,
-            ];
-            ?>
+    <?php if (! empty($daftarHalaman)): ?>
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <?php foreach ($daftarHalaman as $kode => $nama): ?>
+                <?php
+                $ringkasan = $ringkasanHalaman[$kode] ?? [
+                    'total' => 0,
+                    'aktif' => 0,
+                    'nonaktif' => 0,
+                    'boleh_tambah' => false,
+                ];
+                ?>
 
-            <article class="page-card">
-                <div class="page-card-head">
-                    <span class="page-card-icon">
-                        <i
-                            class="fa <?= esc(
-                                $ikonHalaman[$kode] ?? 'fa-file-text-o',
-                                'attr'
-                            ) ?>"
-                            aria-hidden="true"
-                        ></i>
-                    </span>
-
-                    <span
-                        class="badge <?= ! empty($ringkasan['boleh_tambah'])
-                            ? 'badge-info'
-                            : 'badge-neutral'
-                        ?>"
-                    >
-                        <?= ! empty($ringkasan['boleh_tambah'])
-                            ? 'Bisa tambah data'
-                            : 'Edit bagian tetap'
-                        ?>
-                    </span>
-                </div>
-
-                <div class="page-card-body">
-                    <h3><?= esc($nama) ?></h3>
-                    <p>
-                        <?= esc(
-                            $deskripsiHalaman[$kode]
-                            ?? 'Kelola konten halaman website.'
-                        ) ?>
-                    </p>
-                </div>
-
-                <div class="page-card-meta">
-                    <span>
-                        <strong><?= (int) ($ringkasan['total'] ?? 0) ?></strong>
-                        data
-                    </span>
-
-                    <span>
-                        <strong><?= (int) ($ringkasan['aktif'] ?? 0) ?></strong>
-                        aktif
-                    </span>
-
-                    <?php if ((int) ($ringkasan['nonaktif'] ?? 0) > 0): ?>
-                        <span>
-                            <strong><?= (int) $ringkasan['nonaktif'] ?></strong>
-                            nonaktif
+                <article class="flex flex-col rounded-xl border border-slate-200 bg-white p-5">
+                    <div class="mb-4 flex items-start justify-between gap-4">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                            <i
+                                class="fa <?= esc($ikonHalaman[$kode] ?? 'fa-file-text-o', 'attr') ?>"
+                                aria-hidden="true"
+                            ></i>
                         </span>
-                    <?php endif; ?>
-                </div>
 
-                <div class="card-action">
+                        <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-500">
+                            <?= ! empty($ringkasan['boleh_tambah'])
+                                ? 'Data dapat ditambah'
+                                : 'Bagian tetap'
+                            ?>
+                        </span>
+                    </div>
+
+                    <div class="flex-1">
+                        <h3 class="text-base font-semibold text-slate-900">
+                            <?= esc($nama) ?>
+                        </h3>
+
+                        <p class="mt-1.5 text-sm leading-6 text-slate-500">
+                            <?= esc($deskripsiHalaman[$kode] ?? 'Kelola konten halaman website.') ?>
+                        </p>
+                    </div>
+
+                    <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-4 text-xs text-slate-500">
+                        <span>
+                            <strong class="font-semibold text-slate-800">
+                                <?= (int) ($ringkasan['total'] ?? 0) ?>
+                            </strong>
+                            data
+                        </span>
+
+                        <span>
+                            <strong class="font-semibold text-slate-800">
+                                <?= (int) ($ringkasan['aktif'] ?? 0) ?>
+                            </strong>
+                            aktif
+                        </span>
+
+                        <?php if ((int) ($ringkasan['nonaktif'] ?? 0) > 0): ?>
+                            <span>
+                                <strong class="font-semibold text-slate-800">
+                                    <?= (int) $ringkasan['nonaktif'] ?>
+                                </strong>
+                                nonaktif
+                            </span>
+                        <?php endif; ?>
+                    </div>
+
                     <a
                         href="<?= $adminHalamanUrl($kode) ?>"
-                        class="btn btn-primary btn-block"
+                        class="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-az-green px-4 text-sm font-medium text-white hover:bg-emerald-800"
                     >
-                        Kelola <?= esc($nama) ?>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                        Kelola
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
-                </div>
-            </article>
-        <?php endforeach; ?>
-    </div>
-<?php else: ?>
-    <div class="empty-state">
-        <span class="empty-icon">
-            <i class="fa fa-folder-open-o" aria-hidden="true"></i>
-        </span>
-        <h3>Belum ada halaman tersedia</h3>
-        <p>Daftar halaman belum ditemukan.</p>
-    </div>
-<?php endif; ?>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <div class="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+            <i class="fa fa-folder-open-o text-3xl text-slate-300" aria-hidden="true"></i>
+            <h3 class="mt-3 text-sm font-semibold text-slate-900">
+                Belum ada halaman tersedia
+            </h3>
+            <p class="mt-1 text-sm text-slate-500">
+                Daftar halaman belum ditemukan.
+            </p>
+        </div>
+    <?php endif; ?>
+</section>

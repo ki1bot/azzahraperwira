@@ -1,63 +1,54 @@
-<div class="form-page-head">
+<?php
+$inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 pr-16 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-az-green focus:ring-2 focus:ring-emerald-100';
+?>
+
+<div class="mb-6 border-b border-slate-200 pb-6">
     <a
         href="<?= base_url('admin/dashboard/index.php') ?>"
-        class="back-link"
+        class="mb-4 inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900"
     >
         <i class="fa fa-arrow-left" aria-hidden="true"></i>
         Kembali ke Dashboard
     </a>
 
-    <div class="section-heading">
-        <span class="section-kicker">
-            Keamanan Akun
-        </span>
-
-        <h2>Ubah Password Admin</h2>
-
-        <p>
-            Gunakan password baru minimal 8 karakter dan jangan
-            gunakan password yang sama dengan sebelumnya.
-        </p>
-    </div>
+    <p class="text-sm font-medium text-az-green">Keamanan Akun</p>
+    <h2 class="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+        Ubah Password Admin
+    </h2>
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+        Gunakan password baru minimal 8 karakter dan hindari menggunakan password yang sama dengan sebelumnya.
+    </p>
 </div>
 
 <form
     action="<?= base_url('admin/ubah-password/index.php') ?>"
     method="post"
-    class="admin-form password-form"
+    class="max-w-3xl space-y-5"
     autocomplete="off"
 >
-    <section class="form-section">
-        <div class="form-section-head">
-            <span class="form-section-icon">
-                <i class="fa fa-key" aria-hidden="true"></i>
-            </span>
-
-            <div>
-                <h3>Verifikasi Password</h3>
-                <p>
-                    Masukkan password lama lalu tentukan
-                    password baru.
-                </p>
-            </div>
+    <section class="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
+        <div class="mb-5 border-b border-slate-100 pb-4">
+            <h3 class="text-base font-semibold text-slate-900">
+                Verifikasi Password
+            </h3>
+            <p class="mt-1 text-sm text-slate-500">
+                Masukkan password lama lalu tentukan password baru.
+            </p>
         </div>
 
-        <div class="form-grid">
-            <div class="form-group full">
-                <label
-                    for="password_lama"
-                    class="form-label"
-                >
+        <div class="grid gap-5 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+                <label for="password_lama" class="mb-1.5 block text-sm font-medium text-slate-700">
                     Password Lama
-                    <span class="required-mark">*</span>
+                    <span class="text-red-500">*</span>
                 </label>
 
-                <div class="password-field">
+                <div class="relative">
                     <input
                         type="password"
                         name="password_lama"
                         id="password_lama"
-                        class="form-control"
+                        class="<?= $inputClass ?>"
                         placeholder="Masukkan password lama"
                         autocomplete="current-password"
                         required
@@ -65,7 +56,7 @@
 
                     <button
                         type="button"
-                        class="password-toggle"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-az-green hover:bg-emerald-50"
                         data-toggle-password="password_lama"
                         aria-label="Tampilkan password lama"
                     >
@@ -74,21 +65,18 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label
-                    for="password_baru"
-                    class="form-label"
-                >
+            <div>
+                <label for="password_baru" class="mb-1.5 block text-sm font-medium text-slate-700">
                     Password Baru
-                    <span class="required-mark">*</span>
+                    <span class="text-red-500">*</span>
                 </label>
 
-                <div class="password-field">
+                <div class="relative">
                     <input
                         type="password"
                         name="password_baru"
                         id="password_baru"
-                        class="form-control"
+                        class="<?= $inputClass ?>"
                         placeholder="Minimal 8 karakter"
                         autocomplete="new-password"
                         minlength="8"
@@ -97,7 +85,7 @@
 
                     <button
                         type="button"
-                        class="password-toggle"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-az-green hover:bg-emerald-50"
                         data-toggle-password="password_baru"
                         aria-label="Tampilkan password baru"
                     >
@@ -106,21 +94,18 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label
-                    for="konfirmasi_password"
-                    class="form-label"
-                >
+            <div>
+                <label for="konfirmasi_password" class="mb-1.5 block text-sm font-medium text-slate-700">
                     Konfirmasi Password Baru
-                    <span class="required-mark">*</span>
+                    <span class="text-red-500">*</span>
                 </label>
 
-                <div class="password-field">
+                <div class="relative">
                     <input
                         type="password"
                         name="konfirmasi_password"
                         id="konfirmasi_password"
-                        class="form-control"
+                        class="<?= $inputClass ?>"
                         placeholder="Ulangi password baru"
                         autocomplete="new-password"
                         minlength="8"
@@ -129,7 +114,7 @@
 
                     <button
                         type="button"
-                        class="password-toggle"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-az-green hover:bg-emerald-50"
                         data-toggle-password="konfirmasi_password"
                         aria-label="Tampilkan konfirmasi password"
                     >
@@ -140,17 +125,17 @@
         </div>
     </section>
 
-    <div class="form-actions form-actions-sticky">
+    <div class="flex justify-end gap-2">
         <a
             href="<?= base_url('admin/dashboard/index.php') ?>"
-            class="btn btn-secondary"
+            class="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
         >
             Batal
         </a>
 
         <button
             type="submit"
-            class="btn btn-primary"
+            class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-az-green px-4 text-sm font-medium text-white hover:bg-emerald-800"
         >
             <i class="fa fa-floppy-o" aria-hidden="true"></i>
             Simpan Password

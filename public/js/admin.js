@@ -1,15 +1,5 @@
-(function () {
-  const temaTersimpan = localStorage.getItem("tema-admin-yayasan");
-  const tema = temaTersimpan === "dark" ? "dark" : "light";
-  document.documentElement.setAttribute("data-admin-theme", tema);
-})();
-
 document.addEventListener("DOMContentLoaded", function () {
-  const html = document.documentElement;
   const body = document.body;
-  const tombolTema = document.getElementById("themeToggle");
-  const teksTema = document.getElementById("themeText");
-  const ikonTema = document.getElementById("themeIcon");
   const adminProfileButton = document.getElementById("adminProfileButton");
   const adminProfileDropdown = document.getElementById("adminProfileDropdown");
   const mobileAdminToggle = document.getElementById("mobileAdminToggle");
@@ -17,31 +7,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const mobileAdminBackdrop = document.getElementById("mobileAdminBackdrop");
   const adminSidebar = document.getElementById("adminSidebar");
 
-  function setTemaAdmin(tema) {
-    const temaAktif = tema === "dark" ? "dark" : "light";
-
-    html.setAttribute("data-admin-theme", temaAktif);
-    localStorage.setItem("tema-admin-yayasan", temaAktif);
-
-    if (teksTema) {
-      teksTema.textContent =
-        temaAktif === "dark" ? "Mode Terang" : "Mode Gelap";
-    }
-
-    if (ikonTema) {
-      ikonTema.className =
-        temaAktif === "dark" ? "fa fa-sun-o" : "fa fa-moon-o";
-    }
-  }
-
   function bukaMenuAdmin() {
     if (!adminSidebar || !mobileAdminBackdrop) {
       return;
     }
 
-    adminSidebar.classList.add("is-open");
-    mobileAdminBackdrop.classList.add("is-open");
-    body.classList.add("admin-menu-open");
+    adminSidebar.classList.remove("-translate-x-full");
+    adminSidebar.classList.add("translate-x-0");
+    mobileAdminBackdrop.classList.remove("hidden");
+    body.classList.add("overflow-hidden");
   }
 
   function tutupMenuAdmin() {
@@ -49,26 +23,17 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    adminSidebar.classList.remove("is-open");
-    mobileAdminBackdrop.classList.remove("is-open");
-    body.classList.remove("admin-menu-open");
-  }
-
-  setTemaAdmin(html.getAttribute("data-admin-theme") || "light");
-
-  if (tombolTema) {
-    tombolTema.addEventListener("click", function () {
-      const temaAktif = html.getAttribute("data-admin-theme");
-
-      setTemaAdmin(temaAktif === "dark" ? "light" : "dark");
-    });
+    adminSidebar.classList.remove("translate-x-0");
+    adminSidebar.classList.add("-translate-x-full");
+    mobileAdminBackdrop.classList.add("hidden");
+    body.classList.remove("overflow-hidden");
   }
 
   if (mobileAdminToggle && adminSidebar && mobileAdminBackdrop) {
     mobileAdminToggle.addEventListener("click", function (event) {
       event.stopPropagation();
 
-      if (adminSidebar.classList.contains("is-open")) {
+      if (adminSidebar.classList.contains("translate-x-0")) {
         tutupMenuAdmin();
       } else {
         bukaMenuAdmin();
@@ -86,14 +51,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     adminSidebar.querySelectorAll("a").forEach(function (link) {
       link.addEventListener("click", function () {
-        if (window.innerWidth <= 1100) {
+        if (window.innerWidth < 1024) {
           tutupMenuAdmin();
         }
       });
     });
 
     window.addEventListener("resize", function () {
-      if (window.innerWidth > 1100) {
+      if (window.innerWidth >= 1024) {
         tutupMenuAdmin();
       }
     });
@@ -103,7 +68,13 @@ document.addEventListener("DOMContentLoaded", function () {
     adminProfileButton.addEventListener("click", function (event) {
       event.stopPropagation();
 
-      adminProfileDropdown.classList.toggle("show");
+      const sedangTerbuka = !adminProfileDropdown.classList.contains("hidden");
+
+      adminProfileDropdown.classList.toggle("hidden");
+      adminProfileButton.setAttribute(
+        "aria-expanded",
+        sedangTerbuka ? "false" : "true",
+      );
     });
 
     document.addEventListener("click", function (event) {
@@ -111,7 +82,8 @@ document.addEventListener("DOMContentLoaded", function () {
         !adminProfileDropdown.contains(event.target) &&
         !adminProfileButton.contains(event.target)
       ) {
-        adminProfileDropdown.classList.remove("show");
+        adminProfileDropdown.classList.add("hidden");
+        adminProfileButton.setAttribute("aria-expanded", "false");
       }
     });
   }
@@ -122,7 +94,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (adminProfileDropdown) {
-      adminProfileDropdown.classList.remove("show");
+      adminProfileDropdown.classList.add("hidden");
+    }
+
+    if (adminProfileButton) {
+      adminProfileButton.setAttribute("aria-expanded", "false");
     }
 
     tutupMenuAdmin();
@@ -133,7 +109,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .forEach(function (button) {
       button.addEventListener("click", function () {
         const inputId = button.getAttribute("data-toggle-password");
-
         const input = document.getElementById(inputId);
 
         if (!input) {
@@ -143,9 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const sedangPassword = input.type === "password";
 
         input.type = sedangPassword ? "text" : "password";
-
         button.textContent = sedangPassword ? "Tutup" : "Lihat";
-
         button.setAttribute(
           "aria-label",
           sedangPassword ? "Sembunyikan password" : "Tampilkan password",
@@ -157,7 +130,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelectorAll("[data-editor-toolbar]")
     .forEach(function (toolbar) {
       const targetId = toolbar.getAttribute("data-editor-toolbar");
-
       const textarea = document.getElementById(targetId);
 
       if (!textarea) {
@@ -174,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
       toolbar.querySelectorAll("[data-format]").forEach(function (button) {
         button.addEventListener("click", function () {
           const format = button.getAttribute("data-format");
-
           const config = formatMap[format];
 
           if (!config) {
@@ -182,13 +153,9 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           const start = textarea.selectionStart;
-
           const end = textarea.selectionEnd;
-
           const selected = textarea.value.substring(start, end);
-
           const text = selected || config[2];
-
           const replacement = config[0] + text + config[1];
 
           textarea.value =
@@ -197,9 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
             textarea.value.substring(end);
 
           textarea.focus();
-
           textarea.selectionStart = start + config[0].length;
-
           textarea.selectionEnd = start + config[0].length + text.length;
 
           textarea.dispatchEvent(
@@ -216,9 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .forEach(function (input) {
       input.addEventListener("change", function () {
         const targetId = input.getAttribute("data-file-name-target");
-
         const target = document.getElementById(targetId);
-
         const file = input.files && input.files[0] ? input.files[0] : null;
 
         if (target) {
@@ -238,12 +201,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const objectUrl = URL.createObjectURL(file);
-
         const image = document.createElement("img");
 
         image.src = objectUrl;
         image.alt = "Pratinjau gambar baru";
-        image.className = "preview-img";
+        image.className = "h-full max-h-80 w-full rounded-lg object-contain";
 
         image.onload = function () {
           URL.revokeObjectURL(objectUrl);
