@@ -1,42 +1,36 @@
 (function () {
-  const tema = localStorage.getItem("tema-admin-yayasan") || "light";
+  const temaTersimpan = localStorage.getItem("tema-admin-yayasan");
+  const tema = temaTersimpan === "dark" ? "dark" : "light";
   document.documentElement.setAttribute("data-admin-theme", tema);
 })();
 
 document.addEventListener("DOMContentLoaded", function () {
   const html = document.documentElement;
   const body = document.body;
-
   const tombolTema = document.getElementById("themeToggle");
   const teksTema = document.getElementById("themeText");
   const ikonTema = document.getElementById("themeIcon");
-
   const adminProfileButton = document.getElementById("adminProfileButton");
   const adminProfileDropdown = document.getElementById("adminProfileDropdown");
-
   const mobileAdminToggle = document.getElementById("mobileAdminToggle");
   const mobileAdminClose = document.getElementById("mobileAdminClose");
   const mobileAdminBackdrop = document.getElementById("mobileAdminBackdrop");
   const adminSidebar = document.getElementById("adminSidebar");
 
   function setTemaAdmin(tema) {
-    html.setAttribute("data-admin-theme", tema);
-    localStorage.setItem("tema-admin-yayasan", tema);
+    const temaAktif = tema === "dark" ? "dark" : "light";
 
-    if (teksTema && ikonTema) {
-      if (tema === "dark") {
-        teksTema.textContent = "Tema Gelap";
-        ikonTema.textContent = "☾";
-      } else {
-        teksTema.textContent = "Tema Terang";
-        ikonTema.textContent = "☀";
-      }
+    html.setAttribute("data-admin-theme", temaAktif);
+    localStorage.setItem("tema-admin-yayasan", temaAktif);
 
-      return;
+    if (teksTema) {
+      teksTema.textContent =
+        temaAktif === "dark" ? "Mode Terang" : "Mode Gelap";
     }
 
-    if (tombolTema) {
-      tombolTema.textContent = tema === "dark" ? "Tema Gelap" : "Tema Terang";
+    if (ikonTema) {
+      ikonTema.className =
+        temaAktif === "dark" ? "fa fa-sun-o" : "fa fa-moon-o";
     }
   }
 
@@ -60,13 +54,13 @@ document.addEventListener("DOMContentLoaded", function () {
     body.classList.remove("admin-menu-open");
   }
 
-  setTemaAdmin(localStorage.getItem("tema-admin-yayasan") || "light");
+  setTemaAdmin(html.getAttribute("data-admin-theme") || "light");
 
   if (tombolTema) {
     tombolTema.addEventListener("click", function () {
-      const temaAktif =
-        html.getAttribute("data-admin-theme") === "dark" ? "light" : "dark";
-      setTemaAdmin(temaAktif);
+      const temaAktif = html.getAttribute("data-admin-theme");
+
+      setTemaAdmin(temaAktif === "dark" ? "light" : "dark");
     });
   }
 
@@ -108,6 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (adminProfileButton && adminProfileDropdown) {
     adminProfileButton.addEventListener("click", function (event) {
       event.stopPropagation();
+
       adminProfileDropdown.classList.toggle("show");
     });
 
@@ -119,36 +114,38 @@ document.addEventListener("DOMContentLoaded", function () {
         adminProfileDropdown.classList.remove("show");
       }
     });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        adminProfileDropdown.classList.remove("show");
-        tutupMenuAdmin();
-      }
-    });
-  } else {
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        tutupMenuAdmin();
-      }
-    });
   }
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    if (adminProfileDropdown) {
+      adminProfileDropdown.classList.remove("show");
+    }
+
+    tutupMenuAdmin();
+  });
 
   document
     .querySelectorAll("[data-toggle-password]")
     .forEach(function (button) {
       button.addEventListener("click", function () {
         const inputId = button.getAttribute("data-toggle-password");
+
         const input = document.getElementById(inputId);
 
         if (!input) {
           return;
         }
 
-        const sedangPassword = input.getAttribute("type") === "password";
+        const sedangPassword = input.type === "password";
 
-        input.setAttribute("type", sedangPassword ? "text" : "password");
+        input.type = sedangPassword ? "text" : "password";
+
         button.textContent = sedangPassword ? "Tutup" : "Lihat";
+
         button.setAttribute(
           "aria-label",
           sedangPassword ? "Sembunyikan password" : "Tampilkan password",
@@ -160,6 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelectorAll("[data-editor-toolbar]")
     .forEach(function (toolbar) {
       const targetId = toolbar.getAttribute("data-editor-toolbar");
+
       const textarea = document.getElementById(targetId);
 
       if (!textarea) {
@@ -169,14 +167,14 @@ document.addEventListener("DOMContentLoaded", function () {
       const formatMap = {
         bold: ["**", "**", "teks tebal"],
         italic: ["*", "*", "teks miring"],
-        underline: ["__", "__", "teks garis bawah"],
+        underline: ["__", "__", "teks bergaris bawah"],
         strike: ["~~", "~~", "teks dicoret"],
-        code: ["`", "`", "kode"],
       };
 
       toolbar.querySelectorAll("[data-format]").forEach(function (button) {
         button.addEventListener("click", function () {
           const format = button.getAttribute("data-format");
+
           const config = formatMap[format];
 
           if (!config) {
@@ -184,9 +182,13 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           const start = textarea.selectionStart;
+
           const end = textarea.selectionEnd;
+
           const selected = textarea.value.substring(start, end);
+
           const text = selected || config[2];
+
           const replacement = config[0] + text + config[1];
 
           textarea.value =
@@ -195,9 +197,60 @@ document.addEventListener("DOMContentLoaded", function () {
             textarea.value.substring(end);
 
           textarea.focus();
+
           textarea.selectionStart = start + config[0].length;
+
           textarea.selectionEnd = start + config[0].length + text.length;
+
+          textarea.dispatchEvent(
+            new Event("input", {
+              bubbles: true,
+            }),
+          );
         });
+      });
+    });
+
+  document
+    .querySelectorAll("[data-file-name-target]")
+    .forEach(function (input) {
+      input.addEventListener("change", function () {
+        const targetId = input.getAttribute("data-file-name-target");
+
+        const target = document.getElementById(targetId);
+
+        const file = input.files && input.files[0] ? input.files[0] : null;
+
+        if (target) {
+          target.textContent = file ? file.name : "Belum ada file baru dipilih";
+        }
+
+        const previewId = input.getAttribute("data-image-preview");
+
+        if (!previewId || !file || !file.type.startsWith("image/")) {
+          return;
+        }
+
+        const preview = document.getElementById(previewId);
+
+        if (!preview) {
+          return;
+        }
+
+        const objectUrl = URL.createObjectURL(file);
+
+        const image = document.createElement("img");
+
+        image.src = objectUrl;
+        image.alt = "Pratinjau gambar baru";
+        image.className = "preview-img";
+
+        image.onload = function () {
+          URL.revokeObjectURL(objectUrl);
+        };
+
+        preview.innerHTML = "";
+        preview.appendChild(image);
       });
     });
 });

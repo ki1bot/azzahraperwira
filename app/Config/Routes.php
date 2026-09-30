@@ -49,58 +49,46 @@ $routes->group('admin', ['filter' => 'filteradmin'], static function (RouteColle
     $routes->post('ubah-password/index.php', 'Admin\Otentikasi::prosesUbahPassword');
 
     $routes->get('beranda/index.php', 'Admin\KelolaHalaman::index/beranda');
-    $routes->get('beranda/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/beranda/$1');
-    $routes->post('beranda/update/(:num)/index.php', 'Admin\KelolaHalaman::update/beranda/$1');
+    $routes->get('beranda/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/beranda/$1');
+    $routes->post('beranda/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/beranda/$1');
 
     $routes->get('profile/index.php', 'Admin\KelolaHalaman::index/profile');
-    $routes->get('profile/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/profile/$1');
-    $routes->post('profile/update/(:num)/index.php', 'Admin\KelolaHalaman::update/profile/$1');
+    $routes->get('profile/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/profile/$1');
+    $routes->post('profile/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/profile/$1');
 
     $routes->get('tenaga-pengajar/index.php', 'Admin\KelolaHalaman::index/tenaga-pengajar');
     $routes->get('tenaga-pengajar/tambah/index.php', 'Admin\KelolaHalaman::tambah/tenaga-pengajar');
     $routes->post('tenaga-pengajar/simpan/index.php', 'Admin\KelolaHalaman::simpan/tenaga-pengajar');
-    $routes->get('tenaga-pengajar/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/tenaga-pengajar/$1');
-    $routes->post('tenaga-pengajar/update/(:num)/index.php', 'Admin\KelolaHalaman::update/tenaga-pengajar/$1');
-    $routes->post('tenaga-pengajar/hapus/(:num)/index.php', 'Admin\KelolaHalaman::hapus/tenaga-pengajar/$1');
+    $routes->get('tenaga-pengajar/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/tenaga-pengajar/$1');
+    $routes->post('tenaga-pengajar/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/tenaga-pengajar/$1');
+    $routes->post('tenaga-pengajar/hapus/(:segment)/index.php', 'Admin\KelolaHalaman::hapus/tenaga-pengajar/$1');
 
     $routes->get('unit-kb-tk/index.php', 'Admin\KelolaHalaman::index/unit-kb-tk');
-    $routes->get('unit-kb-tk/tambah/index.php', 'Admin\KelolaHalaman::tambah/unit-kb-tk');
-    $routes->post('unit-kb-tk/simpan/index.php', 'Admin\KelolaHalaman::simpan/unit-kb-tk');
-    $routes->get('unit-kb-tk/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/unit-kb-tk/$1');
-    $routes->post('unit-kb-tk/update/(:num)/index.php', 'Admin\KelolaHalaman::update/unit-kb-tk/$1');
-    $routes->post('unit-kb-tk/hapus/(:num)/index.php', 'Admin\KelolaHalaman::hapus/unit-kb-tk/$1');
+    $routes->get('unit-kb-tk/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/unit-kb-tk/$1');
+    $routes->post('unit-kb-tk/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/unit-kb-tk/$1');
 
     $routes->get('unit-tpq/index.php', 'Admin\KelolaHalaman::index/unit-tpq');
-    $routes->get('unit-tpq/tambah/index.php', 'Admin\KelolaHalaman::tambah/unit-tpq');
-    $routes->post('unit-tpq/simpan/index.php', 'Admin\KelolaHalaman::simpan/unit-tpq');
-    $routes->get('unit-tpq/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/unit-tpq/$1');
-    $routes->post('unit-tpq/update/(:num)/index.php', 'Admin\KelolaHalaman::update/unit-tpq/$1');
-    $routes->post('unit-tpq/hapus/(:num)/index.php', 'Admin\KelolaHalaman::hapus/unit-tpq/$1');
+    $routes->get('unit-tpq/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/unit-tpq/$1');
+    $routes->post('unit-tpq/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/unit-tpq/$1');
 
     $routes->get('unit-dc/index.php', 'Admin\KelolaHalaman::index/unit-dc');
-    $routes->get('unit-dc/tambah/index.php', 'Admin\KelolaHalaman::tambah/unit-dc');
-    $routes->post('unit-dc/simpan/index.php', 'Admin\KelolaHalaman::simpan/unit-dc');
-    $routes->get('unit-dc/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/unit-dc/$1');
-    $routes->post('unit-dc/update/(:num)/index.php', 'Admin\KelolaHalaman::update/unit-dc/$1');
-    $routes->post('unit-dc/hapus/(:num)/index.php', 'Admin\KelolaHalaman::hapus/unit-dc/$1');
+    $routes->get('unit-dc/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/unit-dc/$1');
+    $routes->post('unit-dc/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/unit-dc/$1');
 
     $routes->get('unit-lansia/index.php', 'Admin\KelolaHalaman::index/unit-lansia');
-    $routes->get('unit-lansia/tambah/index.php', 'Admin\KelolaHalaman::tambah/unit-lansia');
-    $routes->post('unit-lansia/simpan/index.php', 'Admin\KelolaHalaman::simpan/unit-lansia');
-    $routes->get('unit-lansia/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/unit-lansia/$1');
-    $routes->post('unit-lansia/update/(:num)/index.php', 'Admin\KelolaHalaman::update/unit-lansia/$1');
-    $routes->post('unit-lansia/hapus/(:num)/index.php', 'Admin\KelolaHalaman::hapus/unit-lansia/$1');
+    $routes->get('unit-lansia/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/unit-lansia/$1');
+    $routes->post('unit-lansia/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/unit-lansia/$1');
 
     $routes->get('informasi/index.php', 'Admin\KelolaHalaman::index/informasi');
     $routes->get('informasi/tambah/index.php', 'Admin\KelolaHalaman::tambah/informasi');
     $routes->post('informasi/simpan/index.php', 'Admin\KelolaHalaman::simpan/informasi');
-    $routes->get('informasi/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/informasi/$1');
-    $routes->post('informasi/update/(:num)/index.php', 'Admin\KelolaHalaman::update/informasi/$1');
-    $routes->post('informasi/hapus/(:num)/index.php', 'Admin\KelolaHalaman::hapus/informasi/$1');
+    $routes->get('informasi/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/informasi/$1');
+    $routes->post('informasi/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/informasi/$1');
+    $routes->post('informasi/hapus/(:segment)/index.php', 'Admin\KelolaHalaman::hapus/informasi/$1');
 
     $routes->get('footer/index.php', 'Admin\KelolaHalaman::index/footer');
-    $routes->get('footer/edit/(:num)/index.php', 'Admin\KelolaHalaman::edit/footer/$1');
-    $routes->post('footer/update/(:num)/index.php', 'Admin\KelolaHalaman::update/footer/$1');
+    $routes->get('footer/edit/(:segment)/index.php', 'Admin\KelolaHalaman::edit/footer/$1');
+    $routes->post('footer/update/(:segment)/index.php', 'Admin\KelolaHalaman::update/footer/$1');
 });
 
 if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {

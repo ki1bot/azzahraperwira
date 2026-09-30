@@ -1,7 +1,7 @@
 # ENVIRONMENT / SECRET FILES
 .env
-.env.example
-.env.docker
+.env.*
+!.env.example
 *sql
 
 # COMPOSER DEPENDENCIES

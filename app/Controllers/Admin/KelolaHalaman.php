@@ -32,9 +32,32 @@ class KelolaHalaman extends BaseController
 
     public function dashboard()
     {
+        $daftarHalaman = $this->modelKonten->daftarHalaman();
+        $ringkasanHalaman = [];
+        $totalKonten = 0;
+        $totalAktif = 0;
+        $totalHalamanDinamis = 0;
+
+        foreach ($daftarHalaman as $kodeHalaman => $namaHalaman) {
+            $ringkasan = $this->modelKonten->ringkasan($kodeHalaman);
+            $ringkasan['boleh_tambah'] = $this->layanan->bolehTambah($kodeHalaman);
+            $ringkasanHalaman[$kodeHalaman] = $ringkasan;
+
+            $totalKonten += (int) $ringkasan['total'];
+            $totalAktif += (int) $ringkasan['aktif'];
+
+            if ($ringkasan['boleh_tambah']) {
+                $totalHalamanDinamis++;
+            }
+        }
+
         $data = [
             'judul' => 'Dashboard Admin',
-            'daftarHalaman' => $this->modelKonten->daftarHalaman(),
+            'daftarHalaman' => $daftarHalaman,
+            'ringkasanHalaman' => $ringkasanHalaman,
+            'totalKonten' => $totalKonten,
+            'totalAktif' => $totalAktif,
+            'totalHalamanDinamis' => $totalHalamanDinamis,
         ];
 
         return $this->tampilkan('admin/dashboard', $data);
@@ -57,6 +80,7 @@ class KelolaHalaman extends BaseController
                 $kodeHalaman,
                 $daftarKonten
             ),
+            'ringkasan' => $this->modelKonten->ringkasan($kodeHalaman),
             'bolehTambah' => $bolehTambah,
             'halamanTetap' => ! $bolehTambah,
         ];
@@ -73,16 +97,20 @@ class KelolaHalaman extends BaseController
                 ->to($this->adminUrl($kodeHalaman))
                 ->with(
                     'error',
-                    'Halaman ' . $namaHalaman .
-                    ' hanya boleh diedit. Tidak boleh menambahkan konten baru.'
+                    'Halaman ' . $namaHalaman
+                    . ' memiliki bagian yang sudah ditentukan. '
+                    . 'Gunakan tombol Edit pada bagian yang ingin diubah.'
                 );
         }
 
         $data = [
-            'judul' => 'Tambah Konten',
+            'judul' => 'Tambah Data ' . $namaHalaman,
             'mode' => 'tambah',
             'kodeHalaman' => $kodeHalaman,
             'namaHalaman' => $namaHalaman,
+            'namaBagian' => $kodeHalaman === 'tenaga-pengajar'
+                ? 'Tenaga Pengajar Baru'
+                : 'Informasi Baru',
             'konten' => null,
             'tipeUpload' => $this->layanan->tipeUploadDefault($kodeHalaman),
             'bolehTambah' => true,
@@ -99,24 +127,28 @@ class KelolaHalaman extends BaseController
             return redirect()->to($this->adminUrl($kodeHalaman));
         }
 
-        $this->layanan->namaHalaman($kodeHalaman);
+        $namaHalaman = $this->layanan->namaHalaman($kodeHalaman);
 
         if (! $this->layanan->bolehTambah($kodeHalaman)) {
             return redirect()
                 ->to($this->adminUrl($kodeHalaman))
                 ->with(
                     'error',
-                    'Halaman ini tidak boleh menambahkan data baru. ' .
-                    'Gunakan tombol Edit pada konten yang sudah tersedia.'
+                    'Halaman ini tidak menerima data tambahan. '
+                    . 'Gunakan tombol Edit pada bagian yang sudah tersedia.'
                 );
         }
 
-        if (! $this->validasiFormKonten(true)) {
+        $kategoriWajib = $kodeHalaman === 'tenaga-pengajar';
+
+        if (! $this->validasiFormKonten(true, $kategoriWajib)) {
             return $this->kembaliDenganErrorValidasi();
         }
 
-        $kodeKonten = $this->layanan->normalisasiKode(
-            (string) $this->request->getPost('kode_konten')
+        $judul = trim((string) $this->request->getPost('judul'));
+        $kodeKonten = $this->layanan->buatKodeKontenBaru(
+            $kodeHalaman,
+            $judul
         );
 
         $tipeUpload = $this->layanan->tipeUpload(
@@ -126,20 +158,6 @@ class KelolaHalaman extends BaseController
 
         if (! $this->validasiUpload($tipeUpload)) {
             return $this->kembaliDenganErrorValidasi();
-        }
-
-        if ($this->modelKonten->kodeSudahAda(
-            $kodeHalaman,
-            $kodeKonten
-        )) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with(
-                    'error',
-                    'Kode konten "' . esc($kodeKonten) .
-                    '" sudah dipakai di halaman ini. Gunakan kode lain.'
-                );
         }
 
         $mediaBaru = $this->media->upload(
@@ -161,18 +179,17 @@ class KelolaHalaman extends BaseController
             ->to($this->adminUrl($kodeHalaman))
             ->with(
                 'success',
-                'Konten berhasil ditambahkan. ' .
-                'Frontend akan mengikuti data terbaru.'
+                $namaHalaman . ' berhasil ditambahkan.'
             );
     }
 
-    public function edit(string $kodeHalaman, int $idKonten)
+    public function edit(string $kodeHalaman, string $referensiKonten)
     {
         $namaHalaman = $this->layanan->namaHalaman($kodeHalaman);
 
-        $konten = $this->modelKonten->satu(
+        $konten = $this->layanan->temukanKonten(
             $kodeHalaman,
-            $idKonten
+            $referensiKonten
         );
 
         if (! $konten) {
@@ -185,10 +202,17 @@ class KelolaHalaman extends BaseController
         $bolehTambah = $this->layanan->bolehTambah($kodeHalaman);
 
         $data = [
-            'judul' => 'Edit Konten',
+            'judul' => 'Edit ' . $this->layanan->namaBagian(
+                $kodeHalaman,
+                $kodeKonten
+            ),
             'mode' => 'edit',
             'kodeHalaman' => $kodeHalaman,
             'namaHalaman' => $namaHalaman,
+            'namaBagian' => $this->layanan->namaBagian(
+                $kodeHalaman,
+                $kodeKonten
+            ),
             'konten' => $konten,
             'tipeUpload' => $this->layanan->tipeUpload(
                 $kodeHalaman,
@@ -205,7 +229,7 @@ class KelolaHalaman extends BaseController
         return $this->tampilkan('admin/form_konten', $data);
     }
 
-    public function update(string $kodeHalaman, int $idKonten)
+    public function update(string $kodeHalaman, string $referensiKonten)
     {
         if (! $this->isPost()) {
             return redirect()->to($this->adminUrl($kodeHalaman));
@@ -213,9 +237,9 @@ class KelolaHalaman extends BaseController
 
         $this->layanan->namaHalaman($kodeHalaman);
 
-        $kontenLama = $this->modelKonten->satu(
+        $kontenLama = $this->layanan->temukanKonten(
             $kodeHalaman,
-            $idKonten
+            $referensiKonten
         );
 
         if (! $kontenLama) {
@@ -224,24 +248,21 @@ class KelolaHalaman extends BaseController
             );
         }
 
-        $kodeKontenLama = (string) (
-            $kontenLama['kode_konten'] ?? ''
-        );
+        $kodeKonten = (string) ($kontenLama['kode_konten'] ?? '');
 
         $kodeDikunci = $this->layanan->kodeDikunci(
             $kodeHalaman,
-            $kodeKontenLama
+            $kodeKonten
         );
 
-        if (! $this->validasiFormKonten(! $kodeDikunci)) {
+        $judulWajib = ! $kodeDikunci;
+
+        $kategoriWajib = $kodeHalaman === 'tenaga-pengajar'
+            && ! $kodeDikunci;
+
+        if (! $this->validasiFormKonten($judulWajib, $kategoriWajib)) {
             return $this->kembaliDenganErrorValidasi();
         }
-
-        $kodeKonten = $kodeDikunci
-            ? $kodeKontenLama
-            : $this->layanan->normalisasiKode(
-                (string) $this->request->getPost('kode_konten')
-            );
 
         $tipeUpload = $this->layanan->tipeUpload(
             $kodeHalaman,
@@ -250,21 +271,6 @@ class KelolaHalaman extends BaseController
 
         if (! $this->validasiUpload($tipeUpload)) {
             return $this->kembaliDenganErrorValidasi();
-        }
-
-        if ($this->modelKonten->kodeSudahAda(
-            $kodeHalaman,
-            $kodeKonten,
-            $idKonten
-        )) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with(
-                    'error',
-                    'Kode konten "' . esc($kodeKonten) .
-                    '" sudah dipakai di halaman ini. Gunakan kode lain.'
-                );
         }
 
         $mediaBaru = $this->media->upload(
@@ -281,9 +287,9 @@ class KelolaHalaman extends BaseController
             $kontenLama
         );
 
-        $this->modelKonten->ubah(
+        $this->modelKonten->ubahBerdasarkanKode(
             $kodeHalaman,
-            $idKonten,
+            $kodeKonten,
             $data
         );
 
@@ -291,12 +297,11 @@ class KelolaHalaman extends BaseController
             ->to($this->adminUrl($kodeHalaman))
             ->with(
                 'success',
-                'Konten berhasil diperbarui. ' .
-                'Frontend akan mengikuti data terbaru.'
+                'Perubahan berhasil disimpan.'
             );
     }
 
-    public function hapus(string $kodeHalaman, int $idKonten)
+    public function hapus(string $kodeHalaman, string $referensiKonten)
     {
         if (! $this->isPost()) {
             return redirect()->to($this->adminUrl($kodeHalaman));
@@ -304,9 +309,9 @@ class KelolaHalaman extends BaseController
 
         $this->layanan->namaHalaman($kodeHalaman);
 
-        $konten = $this->modelKonten->satu(
+        $konten = $this->layanan->temukanKonten(
             $kodeHalaman,
-            $idKonten
+            $referensiKonten
         );
 
         if (! $konten) {
@@ -317,22 +322,18 @@ class KelolaHalaman extends BaseController
 
         $kodeKonten = (string) ($konten['kode_konten'] ?? '');
 
-        if (! $this->layanan->bolehHapus(
-            $kodeHalaman,
-            $kodeKonten
-        )) {
+        if (! $this->layanan->bolehHapus($kodeHalaman, $kodeKonten)) {
             return redirect()
                 ->to($this->adminUrl($kodeHalaman))
                 ->with(
                     'error',
-                    'Konten ini tidak boleh dihapus karena ' .
-                    'dipakai sebagai struktur utama halaman.'
+                    'Bagian ini merupakan bagian utama halaman dan tidak dapat dihapus.'
                 );
         }
 
         $this->layanan->hapus(
             $kodeHalaman,
-            $idKonten,
+            $kodeKonten,
             $konten
         );
 
@@ -340,8 +341,7 @@ class KelolaHalaman extends BaseController
             ->to($this->adminUrl($kodeHalaman))
             ->with(
                 'success',
-                'Konten berhasil dihapus. ' .
-                'Frontend akan mengikuti data terbaru.'
+                'Data berhasil dihapus.'
             );
     }
 
@@ -355,25 +355,35 @@ class KelolaHalaman extends BaseController
 
     private function isPost(): bool
     {
-        return strtolower(
-            $this->request->getMethod()
-        ) === 'post';
+        return strtolower($this->request->getMethod()) === 'post';
     }
 
     private function validasiFormKonten(
-        bool $wajibKodeKonten
+        bool $judulWajib,
+        bool $kategoriWajib = false
     ): bool {
-        $aturanKodeKonten = $wajibKodeKonten
-            ? 'required|min_length[3]|max_length[100]'
-            : 'permit_empty|min_length[3]|max_length[100]';
+        $aturanJudul = $judulWajib
+            ? 'required|max_length[255]'
+            : 'permit_empty|max_length[255]';
 
-        return $this->validate([
-            'kode_konten' => $aturanKodeKonten,
-            'judul' => 'permit_empty|max_length[255]',
+        $aturan = [
+            'judul' => $aturanJudul,
             'isi' => 'permit_empty',
-            'urutan' => 'permit_empty|integer',
+            'urutan' => 'permit_empty|integer|greater_than_equal_to[0]',
             'status' => 'required|in_list[aktif,nonaktif]',
-        ]);
+        ];
+
+        if ($kategoriWajib) {
+            $aturan['kategori'] = 'required|max_length[255]';
+        } elseif ($this->request->getPost('kategori') !== null) {
+            $aturan['kategori'] = 'permit_empty|max_length[255]';
+        }
+
+        if ($this->request->getPost('pendidikan') !== null) {
+            $aturan['pendidikan'] = 'permit_empty|max_length[255]';
+        }
+
+        return $this->validate($aturan);
     }
 
     private function validasiUpload(string $tipeUpload): bool

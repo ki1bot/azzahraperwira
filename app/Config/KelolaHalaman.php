@@ -11,6 +11,90 @@ class KelolaHalaman extends BaseConfig
         'informasi',
     ];
 
+    public array $prefixKontenTambahan = [
+        'tenaga-pengajar' => 'pengajar',
+        'informasi' => 'informasi',
+    ];
+
+    public array $labelKonten = [
+        'beranda' => [
+            'hero' => 'Banner Utama',
+            'brosur' => 'Brosur Pendaftaran',
+            'video_profile' => 'Video Profil',
+        ],
+        'profile' => [
+            'judul_halaman' => 'Judul Halaman',
+            'subjudul_halaman' => 'Subjudul Halaman',
+            'profil_yayasan' => 'Profil Yayasan',
+            'visi_misi' => 'Visi',
+            'misi' => 'Misi',
+            'struktur_organisasi' => 'Struktur Organisasi',
+        ],
+        'tenaga-pengajar' => [
+            'judul_halaman' => 'Judul Halaman',
+            'subjudul_halaman' => 'Subjudul Halaman',
+        ],
+        'unit-kb-tk' => [
+            'judul_halaman' => 'Judul Halaman',
+            'subjudul_halaman' => 'Subjudul Halaman',
+            'tentang_unit' => 'Tentang Unit',
+            'program_unit' => 'Program Unit',
+            'fasilitas_unit' => 'Fasilitas',
+            'ekstrakurikuler' => 'Ekstrakurikuler',
+            'galeri_1' => 'Galeri 1',
+            'galeri_2' => 'Galeri 2',
+            'galeri_3' => 'Galeri 3',
+        ],
+        'unit-tpq' => [
+            'judul_halaman' => 'Judul Halaman',
+            'subjudul_halaman' => 'Subjudul Halaman',
+            'tentang_tpq' => 'Tentang TPQ',
+            'tentang_rtq' => 'Tentang RTQ',
+            'program_unit' => 'Program Unit',
+            'kegiatan_unit' => 'Kegiatan Unit',
+            'galeri_1' => 'Galeri 1',
+            'galeri_2' => 'Galeri 2',
+            'galeri_3' => 'Galeri 3',
+        ],
+        'unit-dc' => [
+            'judul_halaman' => 'Judul Halaman',
+            'subjudul_halaman' => 'Subjudul Halaman',
+            'tentang_unit' => 'Tentang Daycare',
+            'program_unit' => 'Program Daycare',
+            'kegiatan_unit' => 'Kegiatan Daycare',
+            'galeri_1' => 'Galeri 1',
+            'galeri_2' => 'Galeri 2',
+            'galeri_3' => 'Galeri 3',
+        ],
+        'unit-lansia' => [
+            'judul_halaman' => 'Judul Halaman',
+            'subjudul_halaman' => 'Subjudul Halaman',
+            'tentang_unit' => 'Tentang Unit Lansia',
+            'program_unit' => 'Program Lansia',
+            'kegiatan_unit' => 'Kegiatan Lansia',
+            'galeri_1' => 'Galeri 1',
+            'galeri_2' => 'Galeri 2',
+            'galeri_3' => 'Galeri 3',
+        ],
+        'informasi' => [
+            'judul_halaman' => 'Judul Halaman',
+            'subjudul_halaman' => 'Subjudul Halaman',
+            'pengumuman' => 'Pengumuman Utama',
+            'berita' => 'Judul Bagian Berita',
+            'brosur' => 'Brosur Pendaftaran',
+        ],
+        'footer' => [
+            'footer_identitas' => 'Identitas Yayasan',
+            'footer_kontak_judul' => 'Judul Kontak',
+            'footer_alamat' => 'Alamat',
+            'footer_whatsapp_1' => 'WhatsApp 1',
+            'footer_whatsapp_2' => 'WhatsApp 2',
+            'footer_instagram' => 'Instagram',
+            'footer_tiktok' => 'TikTok',
+            'footer_copyright' => 'Copyright',
+        ],
+    ];
+
     public array $kodeKontenDikunci = [
         'beranda' => [
             'hero',
@@ -74,6 +158,9 @@ class KelolaHalaman extends BaseConfig
         'informasi' => [
             'judul_halaman',
             'subjudul_halaman',
+            'pengumuman',
+            'berita',
+            'brosur',
         ],
         'footer' => [
             'footer_identitas',

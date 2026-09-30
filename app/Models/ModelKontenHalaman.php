@@ -10,39 +10,30 @@ class ModelKontenHalaman extends Model
     protected $DBGroup = 'default';
 
     private array $daftarTabel = [
-        'beranda'         => 'halaman_beranda',
-        'profile'         => 'halaman_profile',
+        'beranda' => 'halaman_beranda',
+        'profile' => 'halaman_profile',
         'tenaga-pengajar' => 'halaman_tenaga_pengajar',
-        'unit-kb-tk'      => 'halaman_unit_kb_tk',
-        'unit-tpq'        => 'halaman_unit_tpq',
-        'unit-dc'         => 'halaman_unit_dc',
-        'unit-lansia'     => 'halaman_unit_lansia',
-        'informasi'       => 'halaman_informasi',
-        'footer'          => 'halaman_footer',
+        'unit-kb-tk' => 'halaman_unit_kb_tk',
+        'unit-tpq' => 'halaman_unit_tpq',
+        'unit-dc' => 'halaman_unit_dc',
+        'unit-lansia' => 'halaman_unit_lansia',
+        'informasi' => 'halaman_informasi',
+        'footer' => 'halaman_footer',
     ];
 
     public function daftarHalaman(): array
     {
         return [
-            'beranda'         => 'Beranda',
-            'profile'         => 'Profile',
+            'beranda' => 'Beranda',
+            'profile' => 'Profile',
             'tenaga-pengajar' => 'Tenaga Pengajar',
-            'unit-kb-tk'      => 'Unit KB/TK',
-            'unit-tpq'        => 'Unit TPQ',
-            'unit-dc'         => 'Unit Daycare',
-            'unit-lansia'     => 'Unit Lansia',
-            'informasi'       => 'Informasi',
-            'footer'          => 'Footer',
+            'unit-kb-tk' => 'Unit KB/TK',
+            'unit-tpq' => 'Unit TPQ',
+            'unit-dc' => 'Unit Daycare',
+            'unit-lansia' => 'Unit Lansia',
+            'informasi' => 'Informasi',
+            'footer' => 'Footer',
         ];
-    }
-
-    private function namaTabel(string $kodeHalaman): string
-    {
-        if (! array_key_exists($kodeHalaman, $this->daftarTabel)) {
-            throw PageNotFoundException::forPageNotFound('Halaman tidak ditemukan.');
-        }
-
-        return $this->daftarTabel[$kodeHalaman];
     }
 
     public function semua(string $kodeHalaman): array
@@ -98,34 +89,74 @@ class ModelKontenHalaman extends Model
             ->getRowArray();
     }
 
-    public function kodeSudahAda(string $kodeHalaman, string $kodeKonten, ?int $abaikanIdKonten = null): bool
+    public function kodeSudahAda(string $kodeHalaman, string $kodeKonten): bool
     {
-        $builder = $this->db->table($this->namaTabel($kodeHalaman))
-            ->where('kode_konten', $kodeKonten);
+        return $this->db->table($this->namaTabel($kodeHalaman))
+            ->where('kode_konten', $kodeKonten)
+            ->countAllResults() > 0;
+    }
 
-        if ($abaikanIdKonten !== null) {
-            $builder->where('id_konten !=', $abaikanIdKonten);
-        }
+    public function urutanBerikutnya(string $kodeHalaman): int
+    {
+        $baris = $this->db->table($this->namaTabel($kodeHalaman))
+            ->selectMax('urutan', 'urutan_maksimal')
+            ->get()
+            ->getRowArray();
 
-        return $builder->countAllResults() > 0;
+        return ((int) ($baris['urutan_maksimal'] ?? 0)) + 1;
+    }
+
+    public function ringkasan(string $kodeHalaman): array
+    {
+        $namaTabel = $this->namaTabel($kodeHalaman);
+
+        $total = $this->db->table($namaTabel)
+            ->countAllResults();
+
+        $aktif = $this->db->table($namaTabel)
+            ->where('status', 'aktif')
+            ->countAllResults();
+
+        return [
+            'total' => $total,
+            'aktif' => $aktif,
+            'nonaktif' => max(0, $total - $aktif),
+        ];
     }
 
     public function tambah(string $kodeHalaman, array $data): bool
     {
-        return $this->db->table($this->namaTabel($kodeHalaman))->insert($data);
+        return $this->db->table($this->namaTabel($kodeHalaman))
+            ->insert($data);
     }
 
-    public function ubah(string $kodeHalaman, int $idKonten, array $data): bool
-    {
+    public function ubahBerdasarkanKode(
+        string $kodeHalaman,
+        string $kodeKonten,
+        array $data
+    ): bool {
         return $this->db->table($this->namaTabel($kodeHalaman))
-            ->where('id_konten', $idKonten)
+            ->where('kode_konten', $kodeKonten)
             ->update($data);
     }
 
-    public function hapus(string $kodeHalaman, int $idKonten): bool
-    {
+    public function hapusBerdasarkanKode(
+        string $kodeHalaman,
+        string $kodeKonten
+    ): bool {
         return $this->db->table($this->namaTabel($kodeHalaman))
-            ->where('id_konten', $idKonten)
+            ->where('kode_konten', $kodeKonten)
             ->delete();
+    }
+
+    private function namaTabel(string $kodeHalaman): string
+    {
+        if (! array_key_exists($kodeHalaman, $this->daftarTabel)) {
+            throw PageNotFoundException::forPageNotFound(
+                'Halaman tidak ditemukan.'
+            );
+        }
+
+        return $this->daftarTabel[$kodeHalaman];
     }
 }
