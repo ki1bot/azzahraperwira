@@ -2,19 +2,118 @@ document.addEventListener("DOMContentLoaded", function () {
   const body = document.body;
   const adminProfileButton = document.getElementById("adminProfileButton");
   const adminProfileDropdown = document.getElementById("adminProfileDropdown");
-  const mobileAdminToggle = document.getElementById("mobileAdminToggle");
+  const adminSidebar = document.getElementById("adminSidebar");
+  const adminContent = document.getElementById("adminContent");
+  const adminSidebarToggle = document.getElementById("adminSidebarToggle");
+  const adminSidebarToggleIcon = document.getElementById(
+    "adminSidebarToggleIcon",
+  );
   const mobileAdminClose = document.getElementById("mobileAdminClose");
   const mobileAdminBackdrop = document.getElementById("mobileAdminBackdrop");
-  const adminSidebar = document.getElementById("adminSidebar");
+  const adminSidebarHeader = document.getElementById("adminSidebarHeader");
+  const adminSidebarNav = document.getElementById("adminSidebarNav");
+  const adminSidebarBottom = document.getElementById("adminSidebarBottom");
+  const adminSidebarUser = document.getElementById("adminSidebarUser");
+  const desktopMedia = window.matchMedia("(min-width: 1024px)");
+
+  function sidebarLabels() {
+    return document.querySelectorAll("[data-sidebar-label]");
+  }
+
+  function sidebarLinks() {
+    return document.querySelectorAll("[data-sidebar-link]");
+  }
+
+  function sidebarSecondary() {
+    return document.querySelectorAll("[data-sidebar-secondary]");
+  }
+
+  function setToggleButton(mode) {
+    if (!adminSidebarToggle || !adminSidebarToggleIcon) {
+      return;
+    }
+
+    if (mode === "collapsed") {
+      adminSidebarToggleIcon.className = "fa fa-angle-right";
+      adminSidebarToggle.setAttribute("aria-label", "Buka sidebar");
+      adminSidebarToggle.setAttribute("title", "Buka sidebar");
+      return;
+    }
+
+    if (mode === "expanded") {
+      adminSidebarToggleIcon.className = "fa fa-angle-left";
+      adminSidebarToggle.setAttribute("aria-label", "Tutup sidebar");
+      adminSidebarToggle.setAttribute("title", "Tutup sidebar");
+      return;
+    }
+
+    adminSidebarToggleIcon.className = "fa fa-bars";
+    adminSidebarToggle.setAttribute("aria-label", "Buka menu");
+    adminSidebarToggle.setAttribute("title", "Buka menu");
+  }
+
+  function setDesktopSidebar(collapsed) {
+    if (!adminSidebar || !adminContent || !desktopMedia.matches) {
+      return;
+    }
+
+    adminSidebar.classList.toggle("w-20", collapsed);
+    adminSidebar.classList.toggle("w-72", !collapsed);
+
+    adminContent.classList.toggle("lg:ml-20", collapsed);
+    adminContent.classList.toggle("lg:ml-72", !collapsed);
+
+    sidebarLabels().forEach(function (element) {
+      element.classList.toggle("hidden", collapsed);
+    });
+
+    sidebarLinks().forEach(function (element) {
+      element.classList.toggle("justify-center", collapsed);
+    });
+
+    sidebarSecondary().forEach(function (element) {
+      element.classList.toggle("hidden", collapsed);
+    });
+
+    if (adminSidebarHeader) {
+      adminSidebarHeader.classList.toggle("px-3", collapsed);
+      adminSidebarHeader.classList.toggle("px-5", !collapsed);
+      adminSidebarHeader.classList.toggle("justify-center", collapsed);
+      adminSidebarHeader.classList.toggle("justify-between", !collapsed);
+    }
+
+    if (adminSidebarNav) {
+      adminSidebarNav.classList.toggle("px-3", collapsed);
+      adminSidebarNav.classList.toggle("px-4", !collapsed);
+    }
+
+    if (adminSidebarBottom) {
+      adminSidebarBottom.classList.toggle("p-3", collapsed);
+      adminSidebarBottom.classList.toggle("p-4", !collapsed);
+    }
+
+    if (adminSidebarUser) {
+      adminSidebarUser.classList.toggle("justify-center", collapsed);
+    }
+
+    localStorage.setItem(
+      "admin-sidebar-collapsed",
+      collapsed ? "true" : "false",
+    );
+
+    setToggleButton(collapsed ? "collapsed" : "expanded");
+  }
 
   function bukaMenuAdmin() {
-    if (!adminSidebar || !mobileAdminBackdrop) {
+    if (!adminSidebar || !mobileAdminBackdrop || desktopMedia.matches) {
       return;
     }
 
     adminSidebar.classList.remove("-translate-x-full");
     adminSidebar.classList.add("translate-x-0");
+
     mobileAdminBackdrop.classList.remove("hidden");
+
     body.classList.add("overflow-hidden");
   }
 
@@ -25,13 +124,84 @@ document.addEventListener("DOMContentLoaded", function () {
 
     adminSidebar.classList.remove("translate-x-0");
     adminSidebar.classList.add("-translate-x-full");
+
     mobileAdminBackdrop.classList.add("hidden");
+
     body.classList.remove("overflow-hidden");
   }
 
-  if (mobileAdminToggle && adminSidebar && mobileAdminBackdrop) {
-    mobileAdminToggle.addEventListener("click", function (event) {
+  function resetMobileSidebar() {
+    if (!adminSidebar || !adminContent) {
+      return;
+    }
+
+    adminSidebar.classList.remove("w-20");
+    adminSidebar.classList.add("w-72");
+
+    adminContent.classList.remove("lg:ml-20");
+    adminContent.classList.add("lg:ml-72");
+
+    sidebarLabels().forEach(function (element) {
+      element.classList.remove("hidden");
+    });
+
+    sidebarLinks().forEach(function (element) {
+      element.classList.remove("justify-center");
+    });
+
+    sidebarSecondary().forEach(function (element) {
+      element.classList.remove("hidden");
+    });
+
+    if (adminSidebarHeader) {
+      adminSidebarHeader.classList.remove("px-3", "justify-center");
+
+      adminSidebarHeader.classList.add("px-5", "justify-between");
+    }
+
+    if (adminSidebarNav) {
+      adminSidebarNav.classList.remove("px-3");
+      adminSidebarNav.classList.add("px-4");
+    }
+
+    if (adminSidebarBottom) {
+      adminSidebarBottom.classList.remove("p-3");
+      adminSidebarBottom.classList.add("p-4");
+    }
+
+    if (adminSidebarUser) {
+      adminSidebarUser.classList.remove("justify-center");
+    }
+
+    setToggleButton("mobile");
+  }
+
+  function syncSidebarWithViewport() {
+    tutupMenuAdmin();
+
+    if (desktopMedia.matches) {
+      const collapsed =
+        localStorage.getItem("admin-sidebar-collapsed") === "true";
+
+      setDesktopSidebar(collapsed);
+
+      return;
+    }
+
+    resetMobileSidebar();
+  }
+
+  if (adminSidebarToggle && adminSidebar) {
+    adminSidebarToggle.addEventListener("click", function (event) {
       event.stopPropagation();
+
+      if (desktopMedia.matches) {
+        const collapsed = adminSidebar.classList.contains("w-20");
+
+        setDesktopSidebar(!collapsed);
+
+        return;
+      }
 
       if (adminSidebar.classList.contains("translate-x-0")) {
         tutupMenuAdmin();
@@ -39,30 +209,33 @@ document.addEventListener("DOMContentLoaded", function () {
         bukaMenuAdmin();
       }
     });
+  }
 
+  if (mobileAdminBackdrop) {
     mobileAdminBackdrop.addEventListener("click", tutupMenuAdmin);
+  }
 
-    if (mobileAdminClose) {
-      mobileAdminClose.addEventListener("click", function (event) {
-        event.stopPropagation();
-        tutupMenuAdmin();
-      });
-    }
+  if (mobileAdminClose) {
+    mobileAdminClose.addEventListener("click", function (event) {
+      event.stopPropagation();
 
+      tutupMenuAdmin();
+    });
+  }
+
+  if (adminSidebar) {
     adminSidebar.querySelectorAll("a").forEach(function (link) {
       link.addEventListener("click", function () {
-        if (window.innerWidth < 1024) {
+        if (!desktopMedia.matches) {
           tutupMenuAdmin();
         }
       });
     });
-
-    window.addEventListener("resize", function () {
-      if (window.innerWidth >= 1024) {
-        tutupMenuAdmin();
-      }
-    });
   }
+
+  desktopMedia.addEventListener("change", syncSidebarWithViewport);
+
+  syncSidebarWithViewport();
 
   if (adminProfileButton && adminProfileDropdown) {
     adminProfileButton.addEventListener("click", function (event) {
@@ -71,6 +244,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const sedangTerbuka = !adminProfileDropdown.classList.contains("hidden");
 
       adminProfileDropdown.classList.toggle("hidden");
+
       adminProfileButton.setAttribute(
         "aria-expanded",
         sedangTerbuka ? "false" : "true",
@@ -83,6 +257,7 @@ document.addEventListener("DOMContentLoaded", function () {
         !adminProfileButton.contains(event.target)
       ) {
         adminProfileDropdown.classList.add("hidden");
+
         adminProfileButton.setAttribute("aria-expanded", "false");
       }
     });
@@ -101,7 +276,9 @@ document.addEventListener("DOMContentLoaded", function () {
       adminProfileButton.setAttribute("aria-expanded", "false");
     }
 
-    tutupMenuAdmin();
+    if (!desktopMedia.matches) {
+      tutupMenuAdmin();
+    }
   });
 
   document
@@ -109,6 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .forEach(function (button) {
       button.addEventListener("click", function () {
         const inputId = button.getAttribute("data-toggle-password");
+
         const input = document.getElementById(inputId);
 
         if (!input) {
@@ -118,7 +296,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const sedangPassword = input.type === "password";
 
         input.type = sedangPassword ? "text" : "password";
+
         button.textContent = sedangPassword ? "Tutup" : "Lihat";
+
         button.setAttribute(
           "aria-label",
           sedangPassword ? "Sembunyikan password" : "Tampilkan password",
@@ -130,6 +310,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelectorAll("[data-editor-toolbar]")
     .forEach(function (toolbar) {
       const targetId = toolbar.getAttribute("data-editor-toolbar");
+
       const textarea = document.getElementById(targetId);
 
       if (!textarea) {
@@ -146,6 +327,7 @@ document.addEventListener("DOMContentLoaded", function () {
       toolbar.querySelectorAll("[data-format]").forEach(function (button) {
         button.addEventListener("click", function () {
           const format = button.getAttribute("data-format");
+
           const config = formatMap[format];
 
           if (!config) {
@@ -153,9 +335,13 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           const start = textarea.selectionStart;
+
           const end = textarea.selectionEnd;
+
           const selected = textarea.value.substring(start, end);
+
           const text = selected || config[2];
+
           const replacement = config[0] + text + config[1];
 
           textarea.value =
@@ -164,7 +350,9 @@ document.addEventListener("DOMContentLoaded", function () {
             textarea.value.substring(end);
 
           textarea.focus();
+
           textarea.selectionStart = start + config[0].length;
+
           textarea.selectionEnd = start + config[0].length + text.length;
 
           textarea.dispatchEvent(
@@ -181,7 +369,9 @@ document.addEventListener("DOMContentLoaded", function () {
     .forEach(function (input) {
       input.addEventListener("change", function () {
         const targetId = input.getAttribute("data-file-name-target");
+
         const target = document.getElementById(targetId);
+
         const file = input.files && input.files[0] ? input.files[0] : null;
 
         if (target) {
@@ -201,10 +391,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const objectUrl = URL.createObjectURL(file);
+
         const image = document.createElement("img");
 
         image.src = objectUrl;
+
         image.alt = "Pratinjau gambar baru";
+
         image.className = "h-full max-h-80 w-full rounded-lg object-contain";
 
         image.onload = function () {
@@ -212,6 +405,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         preview.innerHTML = "";
+
         preview.appendChild(image);
       });
     });

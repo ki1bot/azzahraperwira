@@ -6,20 +6,7 @@
     <meta name="color-scheme" content="light">
     <title><?= esc($judul ?? 'Login Admin') ?> - Az-Zahra Perwira</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'az-green': '#1a6e4d',
-                        'az-gold': '#fbbf24'
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/font-awesome/css/font-awesome.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/admin.css') ?>">
     <script src="<?= base_url('js/admin.js') ?>" defer></script>
@@ -35,8 +22,13 @@
                     </span>
 
                     <div>
-                        <h1 class="text-base font-semibold">Az-Zahra Perwira</h1>
-                        <p class="mt-0.5 text-xs text-emerald-100">Admin Website</p>
+                        <h1 class="text-base font-semibold">
+                            Az-Zahra Perwira
+                        </h1>
+
+                        <p class="mt-0.5 text-xs text-emerald-100">
+                            Admin Website
+                        </p>
                     </div>
                 </div>
 
@@ -46,29 +38,49 @@
                     </h2>
 
                     <p class="mt-4 text-sm leading-6 text-emerald-100">
-                        Perbarui profil yayasan, tenaga pengajar, unit pendidikan, berita, dan informasi lainnya dari satu tempat.
+                        Perbarui profil yayasan, tenaga pengajar,
+                        unit pendidikan, berita, dan informasi lainnya
+                        dari satu tempat.
                     </p>
 
                     <div class="mt-8 space-y-3 text-sm text-emerald-50">
                         <div class="flex items-center gap-3">
                             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
-                                <i class="fa fa-check text-[10px]" aria-hidden="true"></i>
+                                <i
+                                    class="fa fa-check text-[10px]"
+                                    aria-hidden="true"
+                                ></i>
                             </span>
-                            <span>Form mudah dipahami</span>
+
+                            <span>
+                                Form mudah dipahami
+                            </span>
                         </div>
 
                         <div class="flex items-center gap-3">
                             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
-                                <i class="fa fa-check text-[10px]" aria-hidden="true"></i>
+                                <i
+                                    class="fa fa-check text-[10px]"
+                                    aria-hidden="true"
+                                ></i>
                             </span>
-                            <span>Tidak perlu mengisi ID atau kode konten</span>
+
+                            <span>
+                                Tidak perlu mengisi ID atau kode konten
+                            </span>
                         </div>
 
                         <div class="flex items-center gap-3">
                             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
-                                <i class="fa fa-check text-[10px]" aria-hidden="true"></i>
+                                <i
+                                    class="fa fa-check text-[10px]"
+                                    aria-hidden="true"
+                                ></i>
                             </span>
-                            <span>Konten langsung mengikuti data website</span>
+
+                            <span>
+                                Konten langsung mengikuti data website
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -87,17 +99,26 @@
                             </span>
 
                             <div>
-                                <h1 class="text-sm font-semibold text-slate-900">Az-Zahra Perwira</h1>
-                                <p class="text-xs text-slate-500">Admin Website</p>
+                                <h1 class="text-sm font-semibold text-slate-900">
+                                    Az-Zahra Perwira
+                                </h1>
+
+                                <p class="text-xs text-slate-500">
+                                    Admin Website
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-7">
-                        <p class="text-sm font-medium text-az-green">Selamat Datang</p>
+                        <p class="text-sm font-medium text-az-green">
+                            Selamat Datang
+                        </p>
+
                         <h2 class="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
                             Masuk ke Admin
                         </h2>
+
                         <p class="mt-2 text-sm text-slate-500">
                             Gunakan akun admin yang sudah terdaftar.
                         </p>
@@ -105,15 +126,27 @@
 
                     <?php if (session()->getFlashdata('error')): ?>
                         <div class="mb-5 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                            <i class="fa fa-exclamation-circle mt-0.5" aria-hidden="true"></i>
-                            <div><?= session()->getFlashdata('error') ?></div>
+                            <i
+                                class="fa fa-exclamation-circle mt-0.5"
+                                aria-hidden="true"
+                            ></i>
+
+                            <div>
+                                <?= session()->getFlashdata('error') ?>
+                            </div>
                         </div>
                     <?php endif; ?>
 
                     <?php if (session()->getFlashdata('success')): ?>
                         <div class="mb-5 flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-                            <i class="fa fa-check-circle mt-0.5" aria-hidden="true"></i>
-                            <div><?= session()->getFlashdata('success') ?></div>
+                            <i
+                                class="fa fa-check-circle mt-0.5"
+                                aria-hidden="true"
+                            ></i>
+
+                            <div>
+                                <?= session()->getFlashdata('success') ?>
+                            </div>
                         </div>
                     <?php endif; ?>
 
@@ -124,7 +157,10 @@
                         autocomplete="off"
                     >
                         <div>
-                            <label for="username" class="mb-1.5 block text-sm font-medium text-slate-700">
+                            <label
+                                for="username"
+                                class="mb-1.5 block text-sm font-medium text-slate-700"
+                            >
                                 Username
                             </label>
 
@@ -139,7 +175,10 @@
                                     name="username"
                                     id="username"
                                     class="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-az-green focus:ring-2 focus:ring-emerald-100"
-                                    value="<?= esc(old('username'), 'attr') ?>"
+                                    value="<?= esc(
+                                        old('username'),
+                                        'attr'
+                                    ) ?>"
                                     placeholder="Masukkan username"
                                     autocomplete="username"
                                     required
@@ -149,7 +188,10 @@
                         </div>
 
                         <div>
-                            <label for="password" class="mb-1.5 block text-sm font-medium text-slate-700">
+                            <label
+                                for="password"
+                                class="mb-1.5 block text-sm font-medium text-slate-700"
+                            >
                                 Password
                             </label>
 
@@ -182,15 +224,20 @@
 
                         <button
                             type="submit"
-                            class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-az-green px-4 text-sm font-medium text-white hover:bg-emerald-800"
+                            class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-az-green px-4 text-sm font-medium text-white transition hover:bg-emerald-800"
                         >
                             Masuk ke Dashboard
-                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+
+                            <i
+                                class="fa fa-arrow-right"
+                                aria-hidden="true"
+                            ></i>
                         </button>
                     </form>
 
                     <p class="mt-7 border-t border-slate-100 pt-5 text-center text-xs leading-5 text-slate-400">
-                        Halaman ini hanya untuk pengelola website Az-Zahra Perwira.
+                        Halaman ini hanya untuk pengelola website
+                        Az-Zahra Perwira.
                     </p>
                 </div>
             </section>

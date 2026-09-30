@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@source "../../app/Views/**/*.php";
+@source "../../public/js/**/*.js";
+
+@theme {
+  --color-az-green: #1a6e4d;
+  --color-az-gold: #fbbf24;
+}
