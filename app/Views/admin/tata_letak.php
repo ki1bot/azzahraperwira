@@ -9,18 +9,63 @@ $isActive = static function (string $kataKunci) use ($uriString): bool {
 };
 
 $menuKonten = [
-    ['url' => 'admin/beranda/index.php', 'match' => 'admin/beranda', 'icon' => 'fa-home', 'label' => 'Beranda'],
-    ['url' => 'admin/profile/index.php', 'match' => 'admin/profile', 'icon' => 'fa-building-o', 'label' => 'Profile'],
-    ['url' => 'admin/tenaga-pengajar/index.php', 'match' => 'admin/tenaga-pengajar', 'icon' => 'fa-users', 'label' => 'Tenaga Pengajar'],
-    ['url' => 'admin/informasi/index.php', 'match' => 'admin/informasi', 'icon' => 'fa-newspaper-o', 'label' => 'Informasi'],
-    ['url' => 'admin/footer/index.php', 'match' => 'admin/footer', 'icon' => 'fa-window-minimize', 'label' => 'Footer'],
+    [
+        'url' => 'admin/beranda/index.php',
+        'match' => 'admin/beranda',
+        'icon' => 'fa-home',
+        'label' => 'Beranda',
+    ],
+    [
+        'url' => 'admin/profile/index.php',
+        'match' => 'admin/profile',
+        'icon' => 'fa-building-o',
+        'label' => 'Profile',
+    ],
+    [
+        'url' => 'admin/tenaga-pengajar/index.php',
+        'match' => 'admin/tenaga-pengajar',
+        'icon' => 'fa-users',
+        'label' => 'Tenaga Pengajar',
+    ],
+    [
+        'url' => 'admin/informasi/index.php',
+        'match' => 'admin/informasi',
+        'icon' => 'fa-newspaper-o',
+        'label' => 'Informasi',
+    ],
+    [
+        'url' => 'admin/footer/index.php',
+        'match' => 'admin/footer',
+        'icon' => 'fa-window-minimize',
+        'label' => 'Footer',
+    ],
 ];
 
 $menuUnit = [
-    ['url' => 'admin/unit-kb-tk/index.php', 'match' => 'admin/unit-kb-tk', 'icon' => 'fa-child', 'label' => 'KB / TK'],
-    ['url' => 'admin/unit-tpq/index.php', 'match' => 'admin/unit-tpq', 'icon' => 'fa-book', 'label' => 'TPQ'],
-    ['url' => 'admin/unit-dc/index.php', 'match' => 'admin/unit-dc', 'icon' => 'fa-sun-o', 'label' => 'Daycare'],
-    ['url' => 'admin/unit-lansia/index.php', 'match' => 'admin/unit-lansia', 'icon' => 'fa-heart-o', 'label' => 'Lansia'],
+    [
+        'url' => 'admin/unit-kb-tk/index.php',
+        'match' => 'admin/unit-kb-tk',
+        'icon' => 'fa-child',
+        'label' => 'KB / TK',
+    ],
+    [
+        'url' => 'admin/unit-tpq/index.php',
+        'match' => 'admin/unit-tpq',
+        'icon' => 'fa-book',
+        'label' => 'TPQ',
+    ],
+    [
+        'url' => 'admin/unit-dc/index.php',
+        'match' => 'admin/unit-dc',
+        'icon' => 'fa-sun-o',
+        'label' => 'Daycare',
+    ],
+    [
+        'url' => 'admin/unit-lansia/index.php',
+        'match' => 'admin/unit-lansia',
+        'icon' => 'fa-heart-o',
+        'label' => 'Lansia',
+    ],
 ];
 
 $navClass = static function (bool $active): string {
@@ -31,16 +76,45 @@ $navClass = static function (bool $active): string {
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light">
-    <title><?= esc($judulHalaman) ?> - Admin Az-Zahra Perwira</title>
 
-    <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/font-awesome/css/font-awesome.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/admin.css') ?>">
-    <script src="<?= base_url('js/admin.js') ?>" defer></script>
+    <title>
+        <?= esc($judulHalaman) ?> - Admin Az-Zahra Perwira
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'az-green': '#1a6e4d',
+                        'az-gold': '#fbbf24'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link
+        rel="stylesheet"
+        href="<?= base_url('assets/font-awesome/css/font-awesome.min.css') ?>"
+    >
+
+    <link
+        rel="stylesheet"
+        href="<?= base_url('assets/css/admin.css') ?>"
+    >
+
+    <script
+        src="<?= base_url('js/admin.js') ?>"
+        defer
+    ></script>
 </head>
 
 <body class="min-h-screen bg-slate-50 text-slate-700 antialiased">
@@ -66,7 +140,10 @@ $navClass = static function (bool $active): string {
                     AZ
                 </span>
 
-                <span class="min-w-0" data-sidebar-label>
+                <span
+                    class="min-w-0"
+                    data-sidebar-label
+                >
                     <strong class="block truncate text-sm font-semibold text-slate-900">
                         Az-Zahra Perwira
                     </strong>
@@ -83,7 +160,10 @@ $navClass = static function (bool $active): string {
                 class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 lg:hidden"
                 aria-label="Tutup menu"
             >
-                <i class="fa fa-times" aria-hidden="true"></i>
+                <i
+                    class="fa fa-times"
+                    aria-hidden="true"
+                ></i>
             </button>
         </div>
 
@@ -107,7 +187,10 @@ $navClass = static function (bool $active): string {
                     title="Dashboard"
                 >
                     <span class="flex w-5 shrink-0 justify-center text-slate-500">
-                        <i class="fa fa-th-large" aria-hidden="true"></i>
+                        <i
+                            class="fa fa-th-large"
+                            aria-hidden="true"
+                        ></i>
                     </span>
 
                     <span data-sidebar-label>

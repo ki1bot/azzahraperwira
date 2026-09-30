@@ -1,15 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light">
-    <title><?= esc($judul ?? 'Login Admin') ?> - Az-Zahra Perwira</title>
 
-    <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/font-awesome/css/font-awesome.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/admin.css') ?>">
-    <script src="<?= base_url('js/admin.js') ?>" defer></script>
+    <title>
+        <?= esc($judul ?? 'Login Admin') ?> - Az-Zahra Perwira
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'az-green': '#1a6e4d',
+                        'az-gold': '#fbbf24'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link
+        rel="stylesheet"
+        href="<?= base_url('assets/font-awesome/css/font-awesome.min.css') ?>"
+    >
+
+    <link
+        rel="stylesheet"
+        href="<?= base_url('assets/css/admin.css') ?>"
+    >
+
+    <script
+        src="<?= base_url('js/admin.js') ?>"
+        defer
+    ></script>
 </head>
 
 <body class="min-h-screen bg-slate-50 text-slate-700 antialiased">
