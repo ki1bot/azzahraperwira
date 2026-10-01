@@ -2,83 +2,78 @@ document.addEventListener("DOMContentLoaded", function () {
   const root = document.documentElement;
   const body = document.body;
 
+  const adminSidebar = document.getElementById("adminSidebar");
+
+  const adminSidebarOpen = document.getElementById("adminSidebarOpen");
+
+  const adminSidebarClose = document.getElementById("adminSidebarClose");
+
+  const mobileAdminBackdrop = document.getElementById("mobileAdminBackdrop");
+
   const adminProfileButton = document.getElementById("adminProfileButton");
 
   const adminProfileDropdown = document.getElementById("adminProfileDropdown");
 
-  const adminSidebar = document.getElementById("adminSidebar");
-
-  const adminSidebarToggle = document.getElementById("adminSidebarToggle");
-
-  const adminSidebarToggleIcon = document.getElementById(
-    "adminSidebarToggleIcon",
-  );
-
-  const mobileAdminBackdrop = document.getElementById("mobileAdminBackdrop");
-
   const desktopMedia = window.matchMedia("(min-width: 1024px)");
 
-  function updateToggleButton() {
-    if (!adminSidebarToggle || !adminSidebarToggleIcon) {
-      return;
-    }
+  function updateSidebarButtons() {
+    const desktopClosed = root.classList.contains("admin-sidebar-closed");
 
-    if (desktopMedia.matches) {
-      const closed = root.classList.contains("admin-sidebar-closed");
+    const mobileOpen = root.classList.contains("admin-sidebar-mobile-open");
 
-      adminSidebarToggleIcon.className = closed
-        ? "fa fa-angle-right"
-        : "fa fa-angle-left";
+    if (adminSidebarOpen) {
+      const expanded = desktopMedia.matches ? !desktopClosed : mobileOpen;
 
-      adminSidebarToggle.setAttribute(
-        "aria-label",
-        closed ? "Buka sidebar" : "Tutup sidebar",
-      );
-
-      adminSidebarToggle.setAttribute(
-        "title",
-        closed ? "Buka sidebar" : "Tutup sidebar",
-      );
-
-      adminSidebarToggle.setAttribute(
+      adminSidebarOpen.setAttribute(
         "aria-expanded",
-        closed ? "false" : "true",
+        expanded ? "true" : "false",
       );
-
-      return;
     }
 
-    const opened = root.classList.contains("admin-sidebar-mobile-open");
-
-    adminSidebarToggleIcon.className = opened ? "fa fa-times" : "fa fa-bars";
-
-    adminSidebarToggle.setAttribute(
-      "aria-label",
-      opened ? "Tutup menu" : "Buka menu",
-    );
-
-    adminSidebarToggle.setAttribute(
-      "title",
-      opened ? "Tutup menu" : "Buka menu",
-    );
-
-    adminSidebarToggle.setAttribute("aria-expanded", opened ? "true" : "false");
+    if (adminSidebarClose) {
+      adminSidebarClose.setAttribute(
+        "aria-expanded",
+        desktopMedia.matches
+          ? desktopClosed
+            ? "false"
+            : "true"
+          : mobileOpen
+            ? "true"
+            : "false",
+      );
+    }
   }
 
-  function setDesktopSidebar(closed, save = true) {
+  function closeDesktopSidebar(save = true) {
     if (!desktopMedia.matches) {
       return;
     }
 
-    root.classList.toggle("admin-sidebar-closed", closed);
+    root.classList.add("admin-sidebar-closed");
 
     if (save) {
       try {
-        localStorage.setItem("admin-sidebar-closed", closed ? "true" : "false");
+        localStorage.setItem("admin-sidebar-closed", "true");
       } catch (error) {}
     }
 
-    updateToggleButton();
+    updateSidebarButtons();
+  }
+
+  function openDesktopSidebar(save = true) {
+    if (!desktopMedia.matches) {
+      return;
+    }
+
+    root.classList.remove("admin-sidebar-closed");
+
+    if (save) {
+      try {
+        localStorage.setItem("admin-sidebar-closed", "false");
+      } catch (error) {}
+    }
+
+    updateSidebarButtons();
   }
 
   function openMobileSidebar() {
@@ -90,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     body.classList.add("overflow-hidden");
 
-    updateToggleButton();
+    updateSidebarButtons();
   }
 
   function closeMobileSidebar() {
@@ -98,10 +93,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     body.classList.remove("overflow-hidden");
 
-    updateToggleButton();
+    updateSidebarButtons();
   }
 
-  function syncSidebar() {
+  function syncSidebarWithViewport() {
     root.classList.remove("admin-sidebar-mobile-open");
 
     body.classList.remove("overflow-hidden");
@@ -113,33 +108,39 @@ document.addEventListener("DOMContentLoaded", function () {
         closed = localStorage.getItem("admin-sidebar-closed") === "true";
       } catch (error) {}
 
-      setDesktopSidebar(closed, false);
-
-      return;
+      root.classList.toggle("admin-sidebar-closed", closed);
+    } else {
+      root.classList.remove("admin-sidebar-closed");
     }
 
-    root.classList.remove("admin-sidebar-closed");
-
-    updateToggleButton();
+    updateSidebarButtons();
   }
 
-  if (adminSidebarToggle && adminSidebar) {
-    adminSidebarToggle.addEventListener("click", function (event) {
+  if (adminSidebarOpen) {
+    adminSidebarOpen.addEventListener("click", function (event) {
       event.stopPropagation();
 
       if (desktopMedia.matches) {
-        const closed = root.classList.contains("admin-sidebar-closed");
-
-        setDesktopSidebar(!closed);
+        openDesktopSidebar();
 
         return;
       }
 
-      if (root.classList.contains("admin-sidebar-mobile-open")) {
-        closeMobileSidebar();
-      } else {
-        openMobileSidebar();
+      openMobileSidebar();
+    });
+  }
+
+  if (adminSidebarClose) {
+    adminSidebarClose.addEventListener("click", function (event) {
+      event.stopPropagation();
+
+      if (desktopMedia.matches) {
+        closeDesktopSidebar();
+
+        return;
       }
+
+      closeMobileSidebar();
     });
   }
 
@@ -158,12 +159,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (typeof desktopMedia.addEventListener === "function") {
-    desktopMedia.addEventListener("change", syncSidebar);
+    desktopMedia.addEventListener("change", syncSidebarWithViewport);
   } else {
-    desktopMedia.addListener(syncSidebar);
+    desktopMedia.addListener(syncSidebarWithViewport);
   }
 
-  syncSidebar();
+  syncSidebarWithViewport();
 
   if (adminProfileButton && adminProfileDropdown) {
     adminProfileButton.addEventListener("click", function (event) {

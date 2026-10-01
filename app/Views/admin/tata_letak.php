@@ -82,9 +82,7 @@ $navClass = static function (bool $active): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light">
 
-    <title>
-        <?= esc($judulHalaman) ?> - Admin Az-Zahra Perwira
-    </title>
+    <title><?= esc($judulHalaman) ?> - Admin Az-Zahra Perwira</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -132,31 +130,30 @@ $navClass = static function (bool $active): string {
         class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"
     ></div>
 
+    <button
+        type="button"
+        id="adminSidebarOpen"
+        aria-label="Buka sidebar"
+        title="Buka sidebar"
+        aria-expanded="false"
+    >
+        <i
+            class="fa fa-angle-right"
+            aria-hidden="true"
+        ></i>
+    </button>
+
     <aside
         id="adminSidebar"
         class="fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 bg-white"
     >
-        <button
-            type="button"
-            id="adminSidebarToggle"
-            aria-label="Tutup sidebar"
-            aria-expanded="true"
-            title="Tutup sidebar"
-        >
-            <i
-                id="adminSidebarToggleIcon"
-                class="fa fa-angle-left"
-                aria-hidden="true"
-            ></i>
-        </button>
-
         <div
             id="adminSidebarHeader"
-            class="flex h-20 items-center border-b border-slate-100 px-5"
+            class="flex h-20 items-center justify-between gap-4 border-b border-slate-100 px-5"
         >
             <a
                 href="<?= base_url('admin/dashboard/index.php') ?>"
-                class="min-w-0"
+                class="min-w-0 flex-1"
                 title="Dashboard Admin"
             >
                 <strong class="block truncate text-sm font-semibold text-slate-900">
@@ -167,6 +164,20 @@ $navClass = static function (bool $active): string {
                     Admin Website
                 </small>
             </a>
+
+            <button
+                type="button"
+                id="adminSidebarClose"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                aria-label="Tutup sidebar"
+                title="Tutup sidebar"
+                aria-expanded="true"
+            >
+                <i
+                    class="fa fa-angle-left"
+                    aria-hidden="true"
+                ></i>
+            </button>
         </div>
 
         <nav
