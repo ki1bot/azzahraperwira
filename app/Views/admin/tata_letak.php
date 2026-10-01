@@ -130,26 +130,13 @@ $navClass = static function (bool $active): string {
         class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"
     ></div>
 
-    <button
-        type="button"
-        id="adminSidebarOpen"
-        aria-label="Buka sidebar"
-        title="Buka sidebar"
-        aria-expanded="false"
-    >
-        <i
-            class="fa fa-angle-right"
-            aria-hidden="true"
-        ></i>
-    </button>
-
     <aside
         id="adminSidebar"
         class="fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 bg-white"
     >
         <div
             id="adminSidebarHeader"
-            class="flex h-20 items-center justify-between gap-4 border-b border-slate-100 px-5"
+            class="flex h-20 items-center gap-4 border-b border-slate-100 px-5"
         >
             <a
                 href="<?= base_url('admin/dashboard/index.php') ?>"
@@ -168,10 +155,10 @@ $navClass = static function (bool $active): string {
             <button
                 type="button"
                 id="adminSidebarClose"
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 lg:hidden"
                 aria-label="Tutup sidebar"
                 title="Tutup sidebar"
-                aria-expanded="true"
+                aria-expanded="false"
             >
                 <i
                     class="fa fa-angle-left"
@@ -326,14 +313,31 @@ $navClass = static function (bool $active): string {
     >
         <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
             <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-                <div class="min-w-0">
-                    <p class="hidden text-xs font-medium text-slate-400 sm:block">
-                        Admin Website
-                    </p>
+                <div class="flex min-w-0 items-center gap-3">
+                    <button
+                        type="button"
+                        id="adminSidebarToggle"
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-az-green"
+                        aria-label="Tutup sidebar"
+                        title="Tutup sidebar"
+                        aria-expanded="true"
+                    >
+                        <i
+                            id="adminSidebarToggleIcon"
+                            class="fa fa-angle-left"
+                            aria-hidden="true"
+                        ></i>
+                    </button>
 
-                    <h1 class="truncate text-lg font-semibold text-slate-900 sm:text-xl">
-                        <?= esc($judulHalaman) ?>
-                    </h1>
+                    <div class="min-w-0">
+                        <p class="hidden text-xs font-medium text-slate-400 sm:block">
+                            Admin Website
+                        </p>
+
+                        <h1 class="truncate text-lg font-semibold text-slate-900 sm:text-xl">
+                            <?= esc($judulHalaman) ?>
+                        </h1>
+                    </div>
                 </div>
 
                 <div class="relative">

@@ -21,51 +21,18 @@ select {
   transition: margin-left 280ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#adminSidebarOpen {
-  position: fixed;
-  top: 50%;
-  left: 0;
-  z-index: 45;
-  display: flex;
-  width: 2.25rem;
-  height: 3.25rem;
-  align-items: center;
-  justify-content: center;
-  transform: translate(-100%, -50%);
-  border: 1px solid #e2e8f0;
-  border-left: 0;
-  border-radius: 0 0.75rem 0.75rem 0;
-  background: #ffffff;
-  color: #64748b;
-  box-shadow: 2px 2px 8px rgb(15 23 42 / 0.08);
-  cursor: pointer;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 180ms ease,
-    visibility 180ms ease,
-    color 160ms ease,
-    background-color 160ms ease;
-}
-
-#adminSidebarOpen:hover {
-  background: #f8fafc;
-  color: #1a6e4d;
-}
-
-#adminSidebarOpen:focus-visible,
-#adminSidebarClose:focus-visible {
-  outline: 2px solid #1a6e4d;
-  outline-offset: 2px;
-}
-
+#adminSidebarToggle,
 #adminSidebarClose {
   transition:
     color 160ms ease,
     background-color 160ms ease,
     border-color 160ms ease;
+}
+
+#adminSidebarToggle:focus-visible,
+#adminSidebarClose:focus-visible {
+  outline: 2px solid #1a6e4d;
+  outline-offset: 2px;
 }
 
 #mobileAdminBackdrop {
@@ -87,20 +54,6 @@ html.admin-sidebar-mobile-open #mobileAdminBackdrop {
   pointer-events: auto;
 }
 
-html:not(.admin-sidebar-mobile-open) #adminSidebarOpen {
-  transform: translate(0, -50%);
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-html.admin-sidebar-mobile-open #adminSidebarOpen {
-  transform: translate(-100%, -50%);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
 @media (min-width: 1024px) {
   #adminSidebar {
     transform: translateX(0);
@@ -110,14 +63,6 @@ html.admin-sidebar-mobile-open #adminSidebarOpen {
     margin-left: 18rem;
   }
 
-  #adminSidebarOpen {
-    z-index: 40;
-    transform: translate(-100%, -50%);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-
   html.admin-sidebar-closed #adminSidebar {
     transform: translateX(-100%);
   }
@@ -125,19 +70,12 @@ html.admin-sidebar-mobile-open #adminSidebarOpen {
   html.admin-sidebar-closed #adminContent {
     margin-left: 0;
   }
-
-  html.admin-sidebar-closed #adminSidebarOpen {
-    transform: translate(0, -50%);
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   #adminSidebar,
   #adminContent,
-  #adminSidebarOpen,
+  #adminSidebarToggle,
   #adminSidebarClose,
   #mobileAdminBackdrop {
     transition: none;
