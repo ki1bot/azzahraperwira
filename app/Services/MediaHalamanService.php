@@ -23,9 +23,9 @@ class MediaHalamanService
 
             return [
                 'gambar' =>
-                    'is_image[gambar]' .
-                    '|mime_in[gambar,image/jpg,image/jpeg,image/png,image/webp]' .
-                    '|max_size[gambar,5120]',
+                    'is_image[gambar]'
+                    . '|mime_in[gambar,image/jpg,image/jpeg,image/png,image/webp]'
+                    . '|max_size[gambar,5120]',
             ];
         }
 
@@ -41,9 +41,9 @@ class MediaHalamanService
 
             return [
                 'file_dokumen' =>
-                    'ext_in[file_dokumen,pdf]' .
-                    '|mime_in[file_dokumen,application/pdf,application/x-pdf]' .
-                    '|max_size[file_dokumen,10240]',
+                    'ext_in[file_dokumen,pdf]'
+                    . '|mime_in[file_dokumen,application/pdf,application/x-pdf]'
+                    . '|max_size[file_dokumen,10240]',
             ];
         }
 
@@ -97,8 +97,18 @@ class MediaHalamanService
 
         $fullPath = FCPATH . $path;
 
-        if (is_file($fullPath)) {
-            unlink($fullPath);
+        if (! is_file($fullPath)) {
+            return;
+        }
+
+        if (! @unlink($fullPath)) {
+            log_message(
+                'warning',
+                'File media tidak dapat dihapus: {path}',
+                [
+                    'path' => $path,
+                ]
+            );
         }
     }
 

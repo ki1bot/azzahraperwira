@@ -1,4 +1,5 @@
 <?php
+
 $daftarHalaman = $daftarHalaman ?? [];
 $ringkasanHalaman = $ringkasanHalaman ?? [];
 $totalKonten = (int) ($totalKonten ?? 0);
@@ -74,7 +75,7 @@ $statCards = [
         </h2>
 
         <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-            Pilih halaman yang ingin diperbarui. Semua bagian menggunakan nama yang sama seperti yang tampil di website.
+            Pilih halaman yang ingin diperbarui.
         </p>
     </div>
 </section>
@@ -88,12 +89,12 @@ $statCards = [
                         <?= esc($stat['label']) ?>
                     </p>
 
-                    <div class="mt-3 flex items-baseline gap-2">
-                        <strong class="text-3xl font-semibold tracking-tight text-slate-900">
+                    <div class="mt-3 flex items-center gap-2">
+                        <strong class="text-3xl font-semibold leading-none tracking-tight text-slate-900">
                             <?= (int) $stat['value'] ?>
                         </strong>
 
-                        <span class="text-xs text-slate-400">
+                        <span class="text-xs leading-none text-slate-400">
                             <?= esc($stat['note']) ?>
                         </span>
                     </div>

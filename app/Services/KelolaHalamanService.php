@@ -83,7 +83,10 @@ class KelolaHalamanService
     {
         if (in_array(
             $kodeHalaman,
-            ['tenaga-pengajar', 'informasi'],
+            [
+                'tenaga-pengajar',
+                'informasi',
+            ],
             true
         )) {
             return 'image';
@@ -129,7 +132,9 @@ class KelolaHalamanService
             ->kontenOtomatis[$kodeHalaman] ?? [];
 
         foreach ($daftarKonten as $konten) {
-            $kodeKonten = (string) ($konten['kode_konten'] ?? '');
+            $kodeKonten = (string) (
+                $konten['kode_konten'] ?? ''
+            );
 
             if ($kodeKonten === '') {
                 continue;
@@ -144,7 +149,21 @@ class KelolaHalamanService
                 continue;
             }
 
-            $this->modelKonten->tambah($kodeHalaman, $konten);
+            $berhasil = $this->modelKonten->tambah(
+                $kodeHalaman,
+                $konten
+            );
+
+            if (! $berhasil) {
+                log_message(
+                    'warning',
+                    'Konten otomatis gagal dibuat pada halaman {halaman} dengan kode {kode}.',
+                    [
+                        'halaman' => $kodeHalaman,
+                        'kode' => $kodeKonten,
+                    ]
+                );
+            }
         }
     }
 
@@ -155,7 +174,9 @@ class KelolaHalamanService
         $hakKonten = [];
 
         foreach ($daftarKonten as $konten) {
-            $kodeKonten = (string) ($konten['kode_konten'] ?? '');
+            $kodeKonten = (string) (
+                $konten['kode_konten'] ?? ''
+            );
 
             if ($kodeKonten === '') {
                 continue;
@@ -188,7 +209,9 @@ class KelolaHalamanService
         string $kodeHalaman,
         string $referensiKonten
     ): ?array {
-        $referensiKonten = rawurldecode(trim($referensiKonten));
+        $referensiKonten = rawurldecode(
+            trim($referensiKonten)
+        );
 
         if ($referensiKonten === '') {
             return null;
@@ -217,7 +240,8 @@ class KelolaHalamanService
         string $kodeHalaman,
         string $judul
     ): string {
-        $prefix = $this->konfigurasi->prefixKontenTambahan[$kodeHalaman]
+        $prefix = $this->konfigurasi
+            ->prefixKontenTambahan[$kodeHalaman]
             ?? 'konten';
 
         $slug = $this->normalisasiKode($judul);
@@ -226,16 +250,39 @@ class KelolaHalamanService
             $slug = 'data';
         }
 
-        $maksimalSlug = max(20, 96 - strlen($prefix));
-        $slug = trim(substr($slug, 0, $maksimalSlug), '_');
+        $maksimalSlug = max(
+            20,
+            96 - strlen($prefix)
+        );
+
+        $slug = trim(
+            substr(
+                $slug,
+                0,
+                $maksimalSlug
+            ),
+            '_'
+        );
+
         $kodeDasar = $prefix . '_' . $slug;
         $kodeKonten = $kodeDasar;
         $nomor = 2;
 
-        while ($this->modelKonten->kodeSudahAda($kodeHalaman, $kodeKonten)) {
+        while (
+            $this->modelKonten->kodeSudahAda(
+                $kodeHalaman,
+                $kodeKonten
+            )
+        ) {
             $akhiran = '_' . $nomor;
             $batasDasar = 100 - strlen($akhiran);
-            $kodeKonten = substr($kodeDasar, 0, $batasDasar) . $akhiran;
+
+            $kodeKonten = substr(
+                $kodeDasar,
+                0,
+                $batasDasar
+            ) . $akhiran;
+
             $nomor++;
         }
 
@@ -275,7 +322,9 @@ class KelolaHalamanService
             $kodeKonten,
             $isi,
             $gambar,
-            $this->modelKonten->urutanBerikutnya($kodeHalaman)
+            $this->modelKonten->urutanBerikutnya(
+                $kodeHalaman
+            )
         );
     }
 
@@ -288,26 +337,30 @@ class KelolaHalamanService
         array $kontenLama
     ): array {
         $isi = (string) $request->getPost('isi');
-        $gambar = (string) ($kontenLama['gambar'] ?? '');
+        $gambar = (string) (
+            $kontenLama['gambar'] ?? ''
+        );
 
         if ($tipeUpload === 'file') {
             if ($mediaBaru !== null) {
-                $this->media->hapus($kontenLama['isi'] ?? null);
                 $isi = $mediaBaru;
             } else {
-                $isi = (string) ($kontenLama['isi'] ?? '');
+                $isi = (string) (
+                    $kontenLama['isi'] ?? ''
+                );
             }
 
             $gambar = '';
         }
 
-        if ($tipeUpload === 'image' && $mediaBaru !== null) {
-            $this->media->hapus($kontenLama['gambar'] ?? null);
+        if (
+            $tipeUpload === 'image'
+            && $mediaBaru !== null
+        ) {
             $gambar = $mediaBaru;
         }
 
         if ($tipeUpload === 'none') {
-            $this->media->hapus($kontenLama['gambar'] ?? null);
             $gambar = '';
         }
 
@@ -317,22 +370,70 @@ class KelolaHalamanService
             $kodeKonten,
             $isi,
             $gambar,
-            (int) ($kontenLama['urutan'] ?? 0)
+            (int) (
+                $kontenLama['urutan'] ?? 0
+            )
         );
+    }
+
+    public function bersihkanMediaSetelahUpdate(
+        string $tipeUpload,
+        ?string $mediaBaru,
+        array $kontenLama
+    ): void {
+        if (
+            $tipeUpload === 'file'
+            && $mediaBaru !== null
+        ) {
+            $this->media->hapus(
+                $kontenLama['isi'] ?? null
+            );
+
+            return;
+        }
+
+        if (
+            $tipeUpload === 'image'
+            && $mediaBaru !== null
+        ) {
+            $this->media->hapus(
+                $kontenLama['gambar'] ?? null
+            );
+
+            return;
+        }
+
+        if ($tipeUpload === 'none') {
+            $this->media->hapus(
+                $kontenLama['gambar'] ?? null
+            );
+        }
     }
 
     public function hapus(
         string $kodeHalaman,
         string $kodeKonten,
         array $konten
-    ): void {
-        $this->modelKonten->hapusBerdasarkanKode(
-            $kodeHalaman,
-            $kodeKonten
+    ): bool {
+        $berhasil = $this->modelKonten
+            ->hapusBerdasarkanKode(
+                $kodeHalaman,
+                $kodeKonten
+            );
+
+        if (! $berhasil) {
+            return false;
+        }
+
+        $this->media->hapus(
+            $konten['gambar'] ?? null
         );
 
-        $this->media->hapus($konten['gambar'] ?? null);
-        $this->media->hapus($konten['isi'] ?? null);
+        $this->media->hapus(
+            $konten['isi'] ?? null
+        );
+
+        return true;
     }
 
     private function dataForm(
@@ -344,26 +445,41 @@ class KelolaHalamanService
         int $urutanDefault
     ): array {
         $urutanPost = $request->getPost('urutan');
-        $urutan = $urutanPost === null || $urutanPost === ''
+
+        $urutan = (
+            $urutanPost === null
+            || $urutanPost === ''
+        )
             ? $urutanDefault
-            : max(0, (int) $urutanPost);
+            : max(
+                0,
+                (int) $urutanPost
+            );
 
         $data = [
             'kode_konten' => $kodeKonten,
-            'judul' => trim((string) $request->getPost('judul')),
+            'judul' => trim(
+                (string) $request->getPost('judul')
+            ),
             'isi' => $isi,
             'gambar' => $gambar,
             'urutan' => $urutan,
-            'status' => (string) $request->getPost('status'),
+            'status' => (string) $request->getPost(
+                'status'
+            ),
         ];
 
         if ($kodeHalaman === 'tenaga-pengajar') {
             $data['kategori'] = trim(
-                (string) $request->getPost('kategori')
+                (string) $request->getPost(
+                    'kategori'
+                )
             );
 
             $data['pendidikan'] = trim(
-                (string) $request->getPost('pendidikan')
+                (string) $request->getPost(
+                    'pendidikan'
+                )
             );
         }
 
