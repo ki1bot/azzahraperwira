@@ -77,20 +77,6 @@ $statCards = [
             Pilih halaman yang ingin diperbarui. Semua bagian menggunakan nama yang sama seperti yang tampil di website.
         </p>
     </div>
-
-    <a
-        href="<?= site_url('home/beranda') ?>"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex h-10 items-center justify-center gap-2 self-start rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-    >
-        <i
-            class="fa fa-external-link"
-            aria-hidden="true"
-        ></i>
-
-        Lihat Website
-    </a>
 </section>
 
 <div class="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

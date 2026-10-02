@@ -274,36 +274,6 @@ $navClass = static function (bool $active): string {
                     Lihat Website
                 </span>
             </a>
-
-            <div class="flex items-center gap-3 rounded-lg bg-slate-50 p-3">
-                <img
-                    src="<?= base_url('assets/img/profile/profileAdmin.png') ?>"
-                    alt="Admin"
-                    class="h-9 w-9 shrink-0 rounded-full object-cover"
-                >
-
-                <div class="min-w-0 flex-1">
-                    <strong class="block truncate text-sm font-semibold text-slate-900">
-                        <?= esc($namaAdmin) ?>
-                    </strong>
-
-                    <span class="block truncate text-xs text-slate-500">
-                        @<?= esc($usernameAdmin) ?>
-                    </span>
-                </div>
-
-                <a
-                    href="<?= base_url('admin/logout/index.php') ?>"
-                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-500 hover:bg-white hover:text-red-600"
-                    title="Logout"
-                    aria-label="Logout"
-                >
-                    <i
-                        class="fa fa-sign-out"
-                        aria-hidden="true"
-                    ></i>
-                </a>
-            </div>
         </div>
     </aside>
 
