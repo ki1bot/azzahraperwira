@@ -13,7 +13,10 @@ $kodeHalaman = $kodeHalaman ?? '';
 $namaHalaman = $namaHalaman ?? 'Halaman';
 $bolehTambah = (bool) ($bolehTambah ?? false);
 
-$ringkasTeks = static function (?string $teks, int $maksimal = 150): string {
+$ringkasTeks = static function (
+    ?string $teks,
+    int $maksimal = 150
+): string {
     $teks = konten_plain($teks);
 
     if ($teks === '') {
@@ -24,7 +27,11 @@ $ringkasTeks = static function (?string $teks, int $maksimal = 150): string {
         return $teks;
     }
 
-    return mb_substr($teks, 0, $maksimal) . '...';
+    return mb_substr(
+        $teks,
+        0,
+        $maksimal
+    ) . '...';
 };
 
 $adminHalamanUrl = static function (
@@ -38,7 +45,10 @@ $adminHalamanUrl = static function (
         $url .= '/' . trim($aksi, '/');
     }
 
-    if ($kodeKonten !== null && $kodeKonten !== '') {
+    if (
+        $kodeKonten !== null
+        && $kodeKonten !== ''
+    ) {
         $url .= '/' . rawurlencode($kodeKonten);
     }
 
@@ -54,7 +64,7 @@ $ikonHalaman = [
     'unit-dc' => 'fa-sun-o',
     'unit-lansia' => 'fa-heart-o',
     'informasi' => 'fa-newspaper-o',
-    'footer' => 'fa-window-minimize',
+    'footer' => 'fa-list-alt',
 ];
 
 $teksTambah = $kodeHalaman === 'tenaga-pengajar'
@@ -148,27 +158,37 @@ $teksTambah = $kodeHalaman === 'tenaga-pengajar'
     <div class="space-y-3">
         <?php foreach ($daftarKonten as $konten): ?>
             <?php
-            $kodeKonten = (string) ($konten['kode_konten'] ?? '');
+            $kodeKonten = (string) (
+                $konten['kode_konten'] ?? ''
+            );
+
             $hak = $hakKonten[$kodeKonten] ?? [];
+
             $namaBagian = (string) (
                 $hak['nama_bagian']
                 ?? 'Bagian Konten'
             );
+
             $tipeUpload = (string) (
                 $hak['tipe_upload']
                 ?? 'none'
             );
+
             $bolehHapusKonten = (bool) (
                 $hak['boleh_hapus']
                 ?? false
             );
+
             $kodeDikunci = (bool) (
                 $hak['kode_dikunci']
                 ?? false
             );
 
             $judulKonten = trim(
-                (string) ($konten['judul'] ?? '')
+                (string) (
+                    $konten['judul']
+                    ?? ''
+                )
             );
 
             $isiRingkas = $ringkasTeks(
@@ -194,7 +214,9 @@ $teksTambah = $kodeHalaman === 'tenaga-pengajar'
                         ): ?>
                             <img
                                 src="<?= esc(
-                                    base_url($konten['gambar']),
+                                    base_url(
+                                        $konten['gambar']
+                                    ),
                                     'attr'
                                 ) ?>"
                                 alt="<?= esc(
@@ -299,6 +321,8 @@ $teksTambah = $kodeHalaman === 'tenaga-pengajar'
                                         method="post"
                                         onsubmit="return confirm('Hapus data ini? Tindakan ini tidak dapat dibatalkan.')"
                                     >
+                                        <?= csrf_field() ?>
+
                                         <button
                                             type="submit"
                                             class="flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 bg-white text-red-600 transition hover:bg-red-50"
@@ -388,7 +412,9 @@ $teksTambah = $kodeHalaman === 'tenaga-pengajar'
                             ): ?>
                                 <a
                                     href="<?= esc(
-                                        base_url($konten['isi']),
+                                        base_url(
+                                            $konten['isi']
+                                        ),
                                         'attr'
                                     ) ?>"
                                     target="_blank"

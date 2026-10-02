@@ -26,11 +26,13 @@ $ikonHalaman = [
     'unit-dc' => 'fa-sun-o',
     'unit-lansia' => 'fa-heart-o',
     'informasi' => 'fa-newspaper-o',
-    'footer' => 'fa-window-minimize',
+    'footer' => 'fa-list-alt',
 ];
 
 $adminHalamanUrl = static function (string $kode): string {
-    return base_url('admin/' . trim($kode, '/') . '/index.php');
+    return base_url(
+        'admin/' . trim($kode, '/') . '/index.php'
+    );
 };
 
 $statCards = [
@@ -113,7 +115,10 @@ $statCards = [
 
                 <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-az-green">
                     <i
-                        class="fa <?= esc($stat['icon'], 'attr') ?>"
+                        class="fa <?= esc(
+                            $stat['icon'],
+                            'attr'
+                        ) ?>"
                         aria-hidden="true"
                     ></i>
                 </span>
@@ -150,7 +155,8 @@ $statCards = [
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
                             <i
                                 class="fa <?= esc(
-                                    $ikonHalaman[$kode] ?? 'fa-file-text-o',
+                                    $ikonHalaman[$kode]
+                                    ?? 'fa-file-text-o',
                                     'attr'
                                 ) ?>"
                                 aria-hidden="true"
@@ -181,19 +187,30 @@ $statCards = [
                     <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-4 text-xs text-slate-500">
                         <span>
                             <strong class="font-semibold text-slate-800">
-                                <?= (int) ($ringkasan['total'] ?? 0) ?>
+                                <?= (int) (
+                                    $ringkasan['total']
+                                    ?? 0
+                                ) ?>
                             </strong>
                             data
                         </span>
 
                         <span>
                             <strong class="font-semibold text-slate-800">
-                                <?= (int) ($ringkasan['aktif'] ?? 0) ?>
+                                <?= (int) (
+                                    $ringkasan['aktif']
+                                    ?? 0
+                                ) ?>
                             </strong>
                             aktif
                         </span>
 
-                        <?php if ((int) ($ringkasan['nonaktif'] ?? 0) > 0): ?>
+                        <?php if (
+                            (int) (
+                                $ringkasan['nonaktif']
+                                ?? 0
+                            ) > 0
+                        ): ?>
                             <span>
                                 <strong class="font-semibold text-slate-800">
                                     <?= (int) $ringkasan['nonaktif'] ?>

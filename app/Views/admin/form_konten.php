@@ -31,7 +31,9 @@ $adminFormUrl = static function (
 };
 
 $adminIndexUrl = static function (string $kodeHalaman): string {
-    return base_url('admin/' . trim($kodeHalaman, '/') . '/index.php');
+    return base_url(
+        'admin/' . trim($kodeHalaman, '/') . '/index.php'
+    );
 };
 
 $action = $isEdit
@@ -103,11 +105,14 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
     enctype="multipart/form-data"
     class="space-y-5"
 >
+    <?= csrf_field() ?>
+
     <section class="<?= $sectionClass ?>">
         <div class="mb-5 border-b border-slate-100 pb-4">
             <h3 class="text-base font-semibold text-slate-900">
                 Informasi Utama
             </h3>
+
             <p class="mt-1 text-sm text-slate-500">
                 Isi informasi yang akan ditampilkan kepada pengunjung website.
             </p>
@@ -116,7 +121,10 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
         <div class="grid gap-5 sm:grid-cols-2">
             <?php if ($isTenagaPengajar && ! $kodeDikunci): ?>
                 <div>
-                    <label for="kategori" class="<?= $labelClass ?>">
+                    <label
+                        for="kategori"
+                        class="<?= $labelClass ?>"
+                    >
                         Kategori Pengajar
                         <span class="text-red-500">*</span>
                     </label>
@@ -126,7 +134,13 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                         name="kategori"
                         id="kategori"
                         class="<?= $inputClass ?>"
-                        value="<?= esc(old('kategori', $konten['kategori'] ?? ''), 'attr') ?>"
+                        value="<?= esc(
+                            old(
+                                'kategori',
+                                $konten['kategori'] ?? ''
+                            ),
+                            'attr'
+                        ) ?>"
                         placeholder="Contoh: Pendidik Rumah Quran (RTQ)"
                         required
                     >
@@ -137,7 +151,10 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                 </div>
 
                 <div>
-                    <label for="pendidikan" class="<?= $labelClass ?>">
+                    <label
+                        for="pendidikan"
+                        class="<?= $labelClass ?>"
+                    >
                         Pendidikan / Lulusan
                     </label>
 
@@ -146,14 +163,23 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                         name="pendidikan"
                         id="pendidikan"
                         class="<?= $inputClass ?>"
-                        value="<?= esc(old('pendidikan', $konten['pendidikan'] ?? ''), 'attr') ?>"
+                        value="<?= esc(
+                            old(
+                                'pendidikan',
+                                $konten['pendidikan'] ?? ''
+                            ),
+                            'attr'
+                        ) ?>"
                         placeholder="Contoh: S1, S2, D2, Madrasah A’liyah"
                     >
                 </div>
             <?php endif; ?>
 
             <div class="<?= $isTenagaPengajar && ! $kodeDikunci ? '' : 'sm:col-span-2' ?>">
-                <label for="judul" class="<?= $labelClass ?>">
+                <label
+                    for="judul"
+                    class="<?= $labelClass ?>"
+                >
                     <?= esc($judulLabel) ?>
 
                     <?php if ($judulWajib): ?>
@@ -166,7 +192,13 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                     name="judul"
                     id="judul"
                     class="<?= $inputClass ?>"
-                    value="<?= esc(old('judul', $konten['judul'] ?? ''), 'attr') ?>"
+                    value="<?= esc(
+                        old(
+                            'judul',
+                            $konten['judul'] ?? ''
+                        ),
+                        'attr'
+                    ) ?>"
                     placeholder="<?= esc(
                         $isTenagaPengajar && ! $kodeDikunci
                             ? 'Masukkan nama lengkap pengajar'
@@ -190,9 +222,13 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
             <?php if ($pakaiIsiTeks): ?>
                 <div class="sm:col-span-2">
                     <div class="mb-1.5 flex flex-wrap items-center justify-between gap-2">
-                        <label for="isi" class="text-sm font-medium text-slate-700">
+                        <label
+                            for="isi"
+                            class="text-sm font-medium text-slate-700"
+                        >
                             <?= esc($isiLabel) ?>
                         </label>
+
                         <span class="text-xs text-slate-400">
                             Opsional jika bagian tidak memerlukan teks
                         </span>
@@ -248,8 +284,16 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                         name="isi"
                         id="isi"
                         class="<?= $inputClass ?> min-h-44 resize-y leading-6"
-                        placeholder="<?= esc($isiPlaceholder, 'attr') ?>"
-                    ><?= esc(old('isi', $konten['isi'] ?? '')) ?></textarea>
+                        placeholder="<?= esc(
+                            $isiPlaceholder,
+                            'attr'
+                        ) ?>"
+                    ><?= esc(
+                        old(
+                            'isi',
+                            $konten['isi'] ?? ''
+                        )
+                    ) ?></textarea>
 
                     <p class="<?= $helpClass ?>">
                         Tombol format membantu menandai teks tebal, miring, garis bawah, atau coret.
@@ -259,7 +303,13 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                 <input
                     type="hidden"
                     name="isi"
-                    value="<?= esc(old('isi', $konten['isi'] ?? ''), 'attr') ?>"
+                    value="<?= esc(
+                        old(
+                            'isi',
+                            $konten['isi'] ?? ''
+                        ),
+                        'attr'
+                    ) ?>"
                 >
             <?php endif; ?>
         </div>
@@ -271,14 +321,18 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                 <h3 class="text-base font-semibold text-slate-900">
                     <?= esc($mediaLabel) ?>
                 </h3>
+
                 <p class="mt-1 text-sm text-slate-500">
-                    Gunakan JPG, JPEG, atau PNG dengan ukuran maksimal 5 MB.
+                    Gunakan JPG, JPEG, PNG, atau WebP dengan ukuran maksimal 5 MB.
                 </p>
             </div>
 
             <div class="grid gap-5 md:grid-cols-2">
                 <div>
-                    <label for="gambar" class="<?= $labelClass ?>">
+                    <label
+                        for="gambar"
+                        class="<?= $labelClass ?>"
+                    >
                         <?= esc($mediaLabel) ?>
                     </label>
 
@@ -287,13 +341,17 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                         class="flex min-h-28 cursor-pointer items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 hover:border-az-green hover:bg-emerald-50/40"
                     >
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-az-green shadow-sm">
-                            <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                            <i
+                                class="fa fa-cloud-upload"
+                                aria-hidden="true"
+                            ></i>
                         </span>
 
                         <span class="min-w-0">
                             <strong class="block text-sm font-medium text-slate-700">
                                 Pilih gambar dari perangkat
                             </strong>
+
                             <small
                                 id="gambarFileName"
                                 class="mt-1 block truncate text-xs text-slate-500"
@@ -308,7 +366,7 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                         name="gambar"
                         id="gambar"
                         class="hidden"
-                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                         data-file-name-target="gambarFileName"
                         data-image-preview="gambarPreview"
                     >
@@ -319,7 +377,9 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                 </div>
 
                 <div>
-                    <span class="<?= $labelClass ?>">Pratinjau</span>
+                    <span class="<?= $labelClass ?>">
+                        Pratinjau
+                    </span>
 
                     <div
                         id="gambarPreview"
@@ -327,14 +387,27 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                     >
                         <?php if (! empty($konten['gambar'])): ?>
                             <img
-                                src="<?= esc(base_url($konten['gambar']), 'attr') ?>"
-                                alt="<?= esc($konten['judul'] ?? $namaBagian, 'attr') ?>"
+                                src="<?= esc(
+                                    base_url($konten['gambar']),
+                                    'attr'
+                                ) ?>"
+                                alt="<?= esc(
+                                    $konten['judul']
+                                    ?? $namaBagian,
+                                    'attr'
+                                ) ?>"
                                 class="h-full max-h-80 w-full rounded-lg object-contain"
                             >
                         <?php else: ?>
                             <div class="text-center text-slate-400">
-                                <i class="fa fa-picture-o text-3xl" aria-hidden="true"></i>
-                                <span class="mt-2 block text-xs">Belum ada gambar</span>
+                                <i
+                                    class="fa fa-picture-o text-3xl"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span class="mt-2 block text-xs">
+                                    Belum ada gambar
+                                </span>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -349,6 +422,7 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                 <h3 class="text-base font-semibold text-slate-900">
                     File Brosur
                 </h3>
+
                 <p class="mt-1 text-sm text-slate-500">
                     Gunakan file PDF dengan ukuran maksimal 10 MB.
                 </p>
@@ -361,13 +435,17 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                         class="flex min-h-28 cursor-pointer items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 hover:border-az-green hover:bg-emerald-50/40"
                     >
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-az-green shadow-sm">
-                            <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                            <i
+                                class="fa fa-cloud-upload"
+                                aria-hidden="true"
+                            ></i>
                         </span>
 
                         <span class="min-w-0">
                             <strong class="block text-sm font-medium text-slate-700">
                                 Pilih file PDF
                             </strong>
+
                             <small
                                 id="dokumenFileName"
                                 class="mt-1 block truncate text-xs text-slate-500"
@@ -393,11 +471,16 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
 
                 <div class="flex min-h-28 items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-500">
-                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                        <i
+                            class="fa fa-file-pdf-o"
+                            aria-hidden="true"
+                        ></i>
                     </span>
 
                     <div>
-                        <span class="block text-xs text-slate-400">File saat ini</span>
+                        <span class="block text-xs text-slate-400">
+                            File saat ini
+                        </span>
 
                         <?php if (! empty($konten['isi'])): ?>
                             <strong class="mt-1 block text-sm font-medium text-slate-800">
@@ -405,13 +488,20 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                             </strong>
 
                             <a
-                                href="<?= esc(base_url($konten['isi']), 'attr') ?>"
+                                href="<?= esc(
+                                    base_url($konten['isi']),
+                                    'attr'
+                                ) ?>"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-az-green hover:underline"
                             >
                                 Buka file
-                                <i class="fa fa-external-link" aria-hidden="true"></i>
+
+                                <i
+                                    class="fa fa-external-link"
+                                    aria-hidden="true"
+                                ></i>
                             </a>
                         <?php else: ?>
                             <strong class="mt-1 block text-sm font-medium text-slate-700">
@@ -429,6 +519,7 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
             <h3 class="text-base font-semibold text-slate-900">
                 Pengaturan Tampilan
             </h3>
+
             <p class="mt-1 text-sm text-slate-500">
                 Atur posisi dan status data pada website.
             </p>
@@ -436,7 +527,10 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
 
         <div class="grid gap-5 sm:grid-cols-2">
             <div>
-                <label for="urutan" class="<?= $labelClass ?>">
+                <label
+                    for="urutan"
+                    class="<?= $labelClass ?>"
+                >
                     Urutan Tampil
                 </label>
 
@@ -445,7 +539,13 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                     name="urutan"
                     id="urutan"
                     class="<?= $inputClass ?>"
-                    value="<?= esc(old('urutan', $konten['urutan'] ?? ''), 'attr') ?>"
+                    value="<?= esc(
+                        old(
+                            'urutan',
+                            $konten['urutan'] ?? ''
+                        ),
+                        'attr'
+                    ) ?>"
                     min="0"
                     placeholder="Otomatis"
                 >
@@ -456,12 +556,18 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
             </div>
 
             <div>
-                <label for="status" class="<?= $labelClass ?>">
+                <label
+                    for="status"
+                    class="<?= $labelClass ?>"
+                >
                     Status Tampil
                 </label>
 
                 <?php
-                $status = old('status', $konten['status'] ?? 'aktif');
+                $status = old(
+                    'status',
+                    $konten['status'] ?? 'aktif'
+                );
                 ?>
 
                 <select
@@ -470,10 +576,17 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
                     class="<?= $inputClass ?>"
                     required
                 >
-                    <option value="aktif" <?= $status === 'aktif' ? 'selected' : '' ?>>
+                    <option
+                        value="aktif"
+                        <?= $status === 'aktif' ? 'selected' : '' ?>
+                    >
                         Aktif - tampil di website
                     </option>
-                    <option value="nonaktif" <?= $status === 'nonaktif' ? 'selected' : '' ?>>
+
+                    <option
+                        value="nonaktif"
+                        <?= $status === 'nonaktif' ? 'selected' : '' ?>
+                    >
                         Nonaktif - disembunyikan sementara
                     </option>
                 </select>
@@ -493,7 +606,11 @@ $sectionClass = 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6';
             type="submit"
             class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-az-green px-4 text-sm font-medium text-white hover:bg-emerald-800"
         >
-            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+            <i
+                class="fa fa-floppy-o"
+                aria-hidden="true"
+            ></i>
+
             <?= esc($teksTombol) ?>
         </button>
     </div>

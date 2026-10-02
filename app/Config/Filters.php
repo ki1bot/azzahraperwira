@@ -45,7 +45,7 @@ class Filters extends BaseFilters
      * other kinds of filters, and always applied even if a route does not exist.
      *
      * Filters set by default provide framework functionality. If removed,
-     * those functions will no longer work.
+     * framework functionality may not work as expected.
      *
      * @see https://codeigniter.com/user_guide/incoming/filters.html#provided-filters
      *
@@ -53,12 +53,12 @@ class Filters extends BaseFilters
      */
     public array $required = [
         'before' => [
-            'forcehttps', // Force Global Secure Requests
-            'pagecache',  // Web Page Caching
+            'forcehttps',
+            'pagecache',
         ],
         'after' => [
-            'pagecache',   // Web Page Caching
-            'performance', // Performance Metrics
+            'pagecache',
+            'performance',
         ],
     ];
 
@@ -74,7 +74,7 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            // 'csrf',
+            'csrf',
             // 'invalidchars',
         ],
         'after' => [

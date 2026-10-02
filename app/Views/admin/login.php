@@ -185,6 +185,8 @@
                         class="space-y-5"
                         autocomplete="off"
                     >
+                        <?= csrf_field() ?>
+
                         <div>
                             <label
                                 for="username"
@@ -273,4 +275,5 @@
         </div>
     </main>
 </body>
+
 </html>

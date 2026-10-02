@@ -25,7 +25,7 @@ class MediaHalamanService
                 'gambar' =>
                     'is_image[gambar]' .
                     '|mime_in[gambar,image/jpg,image/jpeg,image/png,image/webp]' .
-                    '|max_size[gambar,2048]',
+                    '|max_size[gambar,5120]',
             ];
         }
 

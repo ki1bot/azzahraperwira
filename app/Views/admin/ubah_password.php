@@ -12,9 +12,11 @@ $inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 
     </a>
 
     <p class="text-sm font-medium text-az-green">Keamanan Akun</p>
+
     <h2 class="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
         Ubah Password Admin
     </h2>
+
     <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
         Gunakan password baru minimal 8 karakter dan hindari menggunakan password yang sama dengan sebelumnya.
     </p>
@@ -26,11 +28,14 @@ $inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 
     class="max-w-3xl space-y-5"
     autocomplete="off"
 >
+    <?= csrf_field() ?>
+
     <section class="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
         <div class="mb-5 border-b border-slate-100 pb-4">
             <h3 class="text-base font-semibold text-slate-900">
                 Verifikasi Password
             </h3>
+
             <p class="mt-1 text-sm text-slate-500">
                 Masukkan password lama lalu tentukan password baru.
             </p>
@@ -38,7 +43,10 @@ $inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 
 
         <div class="grid gap-5 sm:grid-cols-2">
             <div class="sm:col-span-2">
-                <label for="password_lama" class="mb-1.5 block text-sm font-medium text-slate-700">
+                <label
+                    for="password_lama"
+                    class="mb-1.5 block text-sm font-medium text-slate-700"
+                >
                     Password Lama
                     <span class="text-red-500">*</span>
                 </label>
@@ -66,7 +74,10 @@ $inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 
             </div>
 
             <div>
-                <label for="password_baru" class="mb-1.5 block text-sm font-medium text-slate-700">
+                <label
+                    for="password_baru"
+                    class="mb-1.5 block text-sm font-medium text-slate-700"
+                >
                     Password Baru
                     <span class="text-red-500">*</span>
                 </label>
@@ -95,7 +106,10 @@ $inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 
             </div>
 
             <div>
-                <label for="konfirmasi_password" class="mb-1.5 block text-sm font-medium text-slate-700">
+                <label
+                    for="konfirmasi_password"
+                    class="mb-1.5 block text-sm font-medium text-slate-700"
+                >
                     Konfirmasi Password Baru
                     <span class="text-red-500">*</span>
                 </label>
