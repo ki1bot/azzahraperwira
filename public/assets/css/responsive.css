@@ -3,6 +3,7 @@ html {
 }
 
 body {
+  min-width: 0;
   overflow-x: hidden;
 }
 
@@ -12,28 +13,32 @@ iframe {
   max-width: 100%;
 }
 
-@media (max-width: 768px) {
+p,
+a,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+#mobile-menu {
+  max-height: calc(100dvh - 4rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 767.98px) {
   .container {
     width: 100%;
   }
 
-  #mobile-menu {
-    max-height: calc(100vh - 80px);
-    overflow-y: auto;
-    border-top: 1px solid #e5e7eb;
-  }
-
-  nav h1 {
-    max-width: 220px;
-    font-size: 1.15rem !important;
-    line-height: 1.25;
-  }
-
   section,
-  main {
-    overflow-x: hidden;
-  }
-
+  main,
+  footer,
   .grid {
     min-width: 0;
   }
@@ -41,18 +46,28 @@ iframe {
   .text-5xl,
   .text-6xl,
   .text-7xl {
-    font-size: clamp(2rem, 11vw, 3.2rem) !important;
+    font-size: clamp(2rem, 10vw, 3rem) !important;
     line-height: 1.08 !important;
   }
 
   .text-4xl {
-    font-size: clamp(1.8rem, 9vw, 2.5rem) !important;
+    font-size: clamp(1.75rem, 8vw, 2.35rem) !important;
     line-height: 1.15 !important;
   }
 
+  .text-3xl {
+    font-size: clamp(1.5rem, 7vw, 1.9rem) !important;
+    line-height: 1.2 !important;
+  }
+
   .py-24 {
-    padding-top: 4rem !important;
-    padding-bottom: 4rem !important;
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  .py-16 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
   }
 
   .px-6 {
@@ -60,7 +75,29 @@ iframe {
     padding-right: 1rem !important;
   }
 
+  footer {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
   footer .grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 2rem !important;
+  }
+
+  footer a,
+  footer p {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

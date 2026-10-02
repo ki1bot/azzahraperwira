@@ -70,8 +70,8 @@ $menuUnit = [
 
 $navClass = static function (bool $active): string {
     return $active
-        ? 'flex min-h-10 items-center gap-3 rounded-lg bg-emerald-50 px-3 py-2.5 text-sm font-semibold text-az-green transition-colors'
-        : 'flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900';
+        ? 'flex min-h-11 items-center gap-3 rounded-lg bg-emerald-50 px-3 py-2.5 text-sm font-semibold text-az-green transition-colors'
+        : 'flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900';
 };
 ?>
 <!DOCTYPE html>
@@ -101,7 +101,10 @@ $navClass = static function (bool $active): string {
 
     <script>
         try {
-            if (localStorage.getItem('admin-sidebar-closed') === 'true') {
+            if (
+                window.matchMedia('(min-width: 1024px)').matches &&
+                localStorage.getItem('admin-sidebar-closed') === 'true'
+            ) {
                 document.documentElement.classList.add('admin-sidebar-closed');
             }
         } catch (error) {
@@ -128,15 +131,33 @@ $navClass = static function (bool $active): string {
     <div
         id="mobileAdminBackdrop"
         class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"
+        aria-hidden="true"
     ></div>
 
     <aside
         id="adminSidebar"
         class="fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 bg-white"
+        aria-label="Sidebar admin"
     >
+        <button
+            type="button"
+            id="adminSidebarToggle"
+            class="admin-sidebar-handle flex items-center justify-center border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-az-green"
+            aria-label="Buka sidebar"
+            title="Buka sidebar"
+            aria-expanded="false"
+            aria-controls="adminSidebar"
+        >
+            <i
+                id="adminSidebarToggleIcon"
+                class="fa fa-angle-right"
+                aria-hidden="true"
+            ></i>
+        </button>
+
         <div
             id="adminSidebarHeader"
-            class="flex h-20 items-center gap-4 border-b border-slate-100 px-5"
+            class="flex h-20 items-center border-b border-slate-100 px-5"
         >
             <a
                 href="<?= base_url('admin/dashboard/index.php') ?>"
@@ -151,20 +172,6 @@ $navClass = static function (bool $active): string {
                     Admin Website
                 </small>
             </a>
-
-            <button
-                type="button"
-                id="adminSidebarClose"
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 lg:hidden"
-                aria-label="Tutup sidebar"
-                title="Tutup sidebar"
-                aria-expanded="false"
-            >
-                <i
-                    class="fa fa-angle-left"
-                    aria-hidden="true"
-                ></i>
-            </button>
         </div>
 
         <nav
@@ -260,7 +267,7 @@ $navClass = static function (bool $active): string {
                 href="<?= site_url('home/beranda') ?>"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="mb-3 flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
                 title="Lihat Website"
             >
                 <span class="flex w-5 shrink-0 justify-center text-slate-400">
@@ -282,41 +289,25 @@ $navClass = static function (bool $active): string {
         class="min-h-screen"
     >
         <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-            <div class="flex h-16 items-center justify-between gap-4 px-4">
-                <div class="flex min-w-0 items-center gap-3">
-                    <button
-                        type="button"
-                        id="adminSidebarToggle"
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-az-green"
-                        aria-label="Tutup sidebar"
-                        title="Tutup sidebar"
-                        aria-expanded="true"
-                    >
-                        <i
-                            id="adminSidebarToggleIcon"
-                            class="fa fa-angle-left"
-                            aria-hidden="true"
-                        ></i>
-                    </button>
+            <div class="flex h-16 items-center justify-between gap-3 px-3 pl-14 sm:px-6 sm:pl-16 lg:px-8 lg:pl-16">
+                <div class="min-w-0">
+                    <p class="hidden text-xs font-medium text-slate-400 sm:block">
+                        Admin Website
+                    </p>
 
-                    <div class="min-w-0">
-                        <p class="hidden text-xs font-medium text-slate-400 sm:block">
-                            Admin Website
-                        </p>
-
-                        <h1 class="truncate text-lg font-semibold text-slate-900 sm:text-xl">
-                            <?= esc($judulHalaman) ?>
-                        </h1>
-                    </div>
+                    <h1 class="truncate text-base font-semibold text-slate-900 sm:text-xl">
+                        <?= esc($judulHalaman) ?>
+                    </h1>
                 </div>
 
-                <div class="relative">
+                <div class="relative shrink-0">
                     <button
                         type="button"
                         id="adminProfileButton"
-                        class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                        class="flex min-h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-50"
                         aria-label="Buka menu akun"
                         aria-expanded="false"
+                        aria-controls="adminProfileDropdown"
                     >
                         <img
                             src="<?= base_url('assets/img/profile/profileAdmin.png') ?>"
@@ -336,14 +327,14 @@ $navClass = static function (bool $active): string {
 
                     <div
                         id="adminProfileDropdown"
-                        class="absolute right-0 mt-2 hidden w-64 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+                        class="absolute right-0 mt-2 hidden w-[calc(100vw-1.5rem)] max-w-64 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
                     >
                         <div class="border-b border-slate-100 p-4">
-                            <p class="text-sm font-semibold text-slate-900">
+                            <p class="truncate text-sm font-semibold text-slate-900">
                                 <?= esc($namaAdmin) ?>
                             </p>
 
-                            <p class="mt-0.5 text-xs text-slate-500">
+                            <p class="mt-0.5 truncate text-xs text-slate-500">
                                 @<?= esc($usernameAdmin) ?>
                             </p>
                         </div>
@@ -351,7 +342,7 @@ $navClass = static function (bool $active): string {
                         <div class="p-2">
                             <a
                                 href="<?= base_url('admin/ubah-password/index.php') ?>"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                             >
                                 <i
                                     class="fa fa-key w-4 text-center text-slate-400"
@@ -363,48 +354,55 @@ $navClass = static function (bool $active): string {
                                 </span>
                             </a>
 
-                            <a
-                                href="<?= base_url('admin/logout/index.php') ?>"
-                                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-600 hover:bg-red-50"
+                            <form
+                                action="<?= base_url('admin/logout/index.php') ?>"
+                                method="post"
                             >
-                                <i
-                                    class="fa fa-sign-out w-4 text-center"
-                                    aria-hidden="true"
-                                ></i>
+                                <?= csrf_field() ?>
 
-                                <span>
-                                    Logout
-                                </span>
-                            </a>
+                                <button
+                                    type="submit"
+                                    class="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-red-600 hover:bg-red-50"
+                                >
+                                    <i
+                                        class="fa fa-sign-out w-4 text-center"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    <span>
+                                        Logout
+                                    </span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <main class="px-4 py-6 sm:px-6 lg:px-8">
+        <main class="px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
             <div class="mx-auto max-w-[1280px]">
                 <?php if (session()->getFlashdata('success')): ?>
-                    <div class="mb-5 flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+                    <div class="mb-5 flex items-start gap-3 break-words rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
                         <i
-                            class="fa fa-check-circle mt-0.5"
+                            class="fa fa-check-circle mt-0.5 shrink-0"
                             aria-hidden="true"
                         ></i>
 
-                        <div>
+                        <div class="min-w-0">
                             <?= session()->getFlashdata('success') ?>
                         </div>
                     </div>
                 <?php endif; ?>
 
                 <?php if (session()->getFlashdata('error')): ?>
-                    <div class="mb-5 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <div class="mb-5 flex items-start gap-3 break-words rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                         <i
-                            class="fa fa-exclamation-circle mt-0.5"
+                            class="fa fa-exclamation-circle mt-0.5 shrink-0"
                             aria-hidden="true"
                         ></i>
 
-                        <div>
+                        <div class="min-w-0">
                             <?= session()->getFlashdata('error') ?>
                         </div>
                     </div>

@@ -98,7 +98,7 @@ $teksTambah = $kodeHalaman === 'tenaga-pengajar'
                 <?php if ($bolehTambah): ?>
                     Tambah, ubah, nonaktifkan, atau hapus data yang tampil pada halaman ini.
                 <?php else: ?>
-                    Pilih bagian yang ingin diperbarui. Struktur halaman tetap mengikuti tampilan website.
+                    Pilih bagian yang ingin diperbarui.
                 <?php endif; ?>
             </p>
         </div>

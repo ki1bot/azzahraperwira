@@ -1,23 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
   const root = document.documentElement;
-  const body = document.body;
-
   const adminSidebar = document.getElementById("adminSidebar");
-
   const adminSidebarToggle = document.getElementById("adminSidebarToggle");
-
   const adminSidebarToggleIcon = document.getElementById(
     "adminSidebarToggleIcon",
   );
-
-  const adminSidebarClose = document.getElementById("adminSidebarClose");
-
   const mobileAdminBackdrop = document.getElementById("mobileAdminBackdrop");
-
   const adminProfileButton = document.getElementById("adminProfileButton");
-
   const adminProfileDropdown = document.getElementById("adminProfileDropdown");
-
   const desktopMedia = window.matchMedia("(min-width: 1024px)");
 
   function desktopSidebarClosed() {
@@ -29,44 +19,35 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function sidebarExpanded() {
-    if (desktopMedia.matches) {
-      return !desktopSidebarClosed();
-    }
-
-    return mobileSidebarOpen();
+    return desktopMedia.matches ? !desktopSidebarClosed() : mobileSidebarOpen();
   }
 
-  function updateSidebarButtons() {
+  function updateSidebarButton() {
+    if (!adminSidebarToggle) {
+      return;
+    }
+
     const expanded = sidebarExpanded();
 
-    if (adminSidebarToggle) {
-      adminSidebarToggle.setAttribute(
-        "aria-expanded",
-        expanded ? "true" : "false",
-      );
+    adminSidebarToggle.setAttribute(
+      "aria-expanded",
+      expanded ? "true" : "false",
+    );
 
-      adminSidebarToggle.setAttribute(
-        "aria-label",
-        expanded ? "Tutup sidebar" : "Buka sidebar",
-      );
+    adminSidebarToggle.setAttribute(
+      "aria-label",
+      expanded ? "Tutup sidebar" : "Buka sidebar",
+    );
 
-      adminSidebarToggle.setAttribute(
-        "title",
-        expanded ? "Tutup sidebar" : "Buka sidebar",
-      );
-    }
+    adminSidebarToggle.setAttribute(
+      "title",
+      expanded ? "Tutup sidebar" : "Buka sidebar",
+    );
 
     if (adminSidebarToggleIcon) {
       adminSidebarToggleIcon.className = expanded
         ? "fa fa-angle-left"
         : "fa fa-angle-right";
-    }
-
-    if (adminSidebarClose) {
-      adminSidebarClose.setAttribute(
-        "aria-expanded",
-        mobileSidebarOpen() ? "true" : "false",
-      );
     }
   }
 
@@ -76,66 +57,36 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {}
   }
 
-  function openDesktopSidebar(save = true) {
-    if (!desktopMedia.matches) {
-      return;
-    }
-
+  function openDesktopSidebar() {
     root.classList.remove("admin-sidebar-closed");
-
-    if (save) {
-      saveDesktopSidebarState(false);
-    }
-
-    updateSidebarButtons();
+    saveDesktopSidebarState(false);
+    updateSidebarButton();
   }
 
-  function closeDesktopSidebar(save = true) {
-    if (!desktopMedia.matches) {
-      return;
-    }
-
+  function closeDesktopSidebar() {
     root.classList.add("admin-sidebar-closed");
-
-    if (save) {
-      saveDesktopSidebarState(true);
-    }
-
-    updateSidebarButtons();
-  }
-
-  function toggleDesktopSidebar() {
-    if (!desktopMedia.matches) {
-      return;
-    }
-
-    if (desktopSidebarClosed()) {
-      openDesktopSidebar();
-    } else {
-      closeDesktopSidebar();
-    }
+    saveDesktopSidebarState(true);
+    updateSidebarButton();
   }
 
   function openMobileSidebar() {
-    if (desktopMedia.matches) {
-      return;
-    }
-
     root.classList.add("admin-sidebar-mobile-open");
-    body.classList.add("overflow-hidden");
-
-    updateSidebarButtons();
+    updateSidebarButton();
   }
 
   function closeMobileSidebar() {
     root.classList.remove("admin-sidebar-mobile-open");
-    body.classList.remove("overflow-hidden");
-
-    updateSidebarButtons();
+    updateSidebarButton();
   }
 
-  function toggleMobileSidebar() {
+  function toggleSidebar() {
     if (desktopMedia.matches) {
+      if (desktopSidebarClosed()) {
+        openDesktopSidebar();
+      } else {
+        closeDesktopSidebar();
+      }
+
       return;
     }
 
@@ -146,17 +97,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function toggleSidebar() {
-    if (desktopMedia.matches) {
-      toggleDesktopSidebar();
-    } else {
-      toggleMobileSidebar();
-    }
-  }
-
   function syncSidebarWithViewport() {
     root.classList.remove("admin-sidebar-mobile-open");
-    body.classList.remove("overflow-hidden");
 
     if (desktopMedia.matches) {
       let closed = false;
@@ -170,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
       root.classList.remove("admin-sidebar-closed");
     }
 
-    updateSidebarButtons();
+    updateSidebarButton();
   }
 
   if (adminSidebarToggle) {
@@ -179,15 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
       event.stopPropagation();
 
       toggleSidebar();
-    });
-  }
-
-  if (adminSidebarClose) {
-    adminSidebarClose.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      closeMobileSidebar();
     });
   }
 
@@ -219,11 +152,14 @@ document.addEventListener("DOMContentLoaded", function () {
     adminProfileButton.addEventListener("click", function (event) {
       event.stopPropagation();
 
-      const open = !adminProfileDropdown.classList.contains("hidden");
+      const willOpen = adminProfileDropdown.classList.contains("hidden");
 
-      adminProfileDropdown.classList.toggle("hidden");
+      adminProfileDropdown.classList.toggle("hidden", !willOpen);
 
-      adminProfileButton.setAttribute("aria-expanded", open ? "false" : "true");
+      adminProfileButton.setAttribute(
+        "aria-expanded",
+        willOpen ? "true" : "false",
+      );
     });
 
     document.addEventListener("click", function (event) {
@@ -232,7 +168,6 @@ document.addEventListener("DOMContentLoaded", function () {
         !adminProfileButton.contains(event.target)
       ) {
         adminProfileDropdown.classList.add("hidden");
-
         adminProfileButton.setAttribute("aria-expanded", "false");
       }
     });
@@ -261,22 +196,20 @@ document.addEventListener("DOMContentLoaded", function () {
     .forEach(function (button) {
       button.addEventListener("click", function () {
         const inputId = button.getAttribute("data-toggle-password");
-
         const input = document.getElementById(inputId);
 
         if (!input) {
           return;
         }
 
-        const password = input.type === "password";
+        const passwordHidden = input.type === "password";
 
-        input.type = password ? "text" : "password";
-
-        button.textContent = password ? "Tutup" : "Lihat";
+        input.type = passwordHidden ? "text" : "password";
+        button.textContent = passwordHidden ? "Tutup" : "Lihat";
 
         button.setAttribute(
           "aria-label",
-          password ? "Sembunyikan password" : "Tampilkan password",
+          passwordHidden ? "Sembunyikan password" : "Tampilkan password",
         );
       });
     });
@@ -285,7 +218,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelectorAll("[data-editor-toolbar]")
     .forEach(function (toolbar) {
       const targetId = toolbar.getAttribute("data-editor-toolbar");
-
       const textarea = document.getElementById(targetId);
 
       if (!textarea) {
@@ -302,7 +234,6 @@ document.addEventListener("DOMContentLoaded", function () {
       toolbar.querySelectorAll("[data-format]").forEach(function (button) {
         button.addEventListener("click", function () {
           const format = button.getAttribute("data-format");
-
           const config = formatMap[format];
 
           if (!config) {
@@ -311,11 +242,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const start = textarea.selectionStart;
           const end = textarea.selectionEnd;
-
           const selected = textarea.value.substring(start, end);
-
           const text = selected || config[2];
-
           const replacement = config[0] + text + config[1];
 
           textarea.value =
@@ -324,9 +252,7 @@ document.addEventListener("DOMContentLoaded", function () {
             textarea.value.substring(end);
 
           textarea.focus();
-
           textarea.selectionStart = start + config[0].length;
-
           textarea.selectionEnd = start + config[0].length + text.length;
 
           textarea.dispatchEvent(
@@ -343,9 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .forEach(function (input) {
       input.addEventListener("change", function () {
         const targetId = input.getAttribute("data-file-name-target");
-
         const target = document.getElementById(targetId);
-
         const file = input.files && input.files[0] ? input.files[0] : null;
 
         if (target) {
@@ -365,13 +289,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const objectUrl = URL.createObjectURL(file);
-
         const image = document.createElement("img");
 
         image.src = objectUrl;
-
         image.alt = "Pratinjau gambar baru";
-
         image.className = "h-full max-h-80 w-full rounded-lg object-contain";
 
         image.onload = function () {
@@ -379,7 +300,6 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         preview.innerHTML = "";
-
         preview.appendChild(image);
       });
     });
