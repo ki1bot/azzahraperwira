@@ -10,40 +10,148 @@ if (! function_exists('konten_format')) {
         }
 
         $teks = str_replace(["\r\n", "\r"], "\n", $teks);
-        $teks = htmlspecialchars($teks, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-        $pola = [
-            '/\*\*(.+?)\*\*/s',
-            '/__(.+?)__/s',
-            '/~~(.+?)~~/s',
+        $teks = htmlspecialchars(
+            $teks,
+            ENT_QUOTES | ENT_SUBSTITUTE,
+            'UTF-8'
+        );
+
+        $kode = [];
+
+        $teks = preg_replace_callback(
             '/`(.+?)`/s',
-            '/(^|[^\\\\*])\*(?!\*)(.+?)(?<!\*)\*(?!\*)/s',
-        ];
+            static function (array $match) use (&$kode): string {
+                $token = "\x1A" . count($kode) . "\x1A";
 
-        $ganti = [
-            '<strong>$1</strong>',
-            '<u>$1</u>',
-            '<del>$1</del>',
-            '<code>$1</code>',
-            '$1<em>$2</em>',
-        ];
+                $kode[$token] = '<code>'
+                    . $match[1]
+                    . '</code>';
 
-        $teks = preg_replace($pola, $ganti, $teks) ?? $teks;
+                return $token;
+            },
+            $teks
+        ) ?? $teks;
 
-        return nl2br($teks, false);
+        $formatInline = null;
+
+        $formatInline = static function (
+            string $nilai
+        ) use (
+            &$formatInline
+        ): string {
+            $nilai = preg_replace_callback(
+                '/\*\*\*(.+?)\*\*\*/s',
+                static function (
+                    array $match
+                ) use (
+                    &$formatInline
+                ): string {
+                    return '<strong><em>'
+                        . $formatInline($match[1])
+                        . '</em></strong>';
+                },
+                $nilai
+            ) ?? $nilai;
+
+            $nilai = preg_replace_callback(
+                '/\*\*(.+?)\*\*/s',
+                static function (
+                    array $match
+                ) use (
+                    &$formatInline
+                ): string {
+                    return '<strong>'
+                        . $formatInline($match[1])
+                        . '</strong>';
+                },
+                $nilai
+            ) ?? $nilai;
+
+            $nilai = preg_replace_callback(
+                '/__(.+?)__/s',
+                static function (
+                    array $match
+                ) use (
+                    &$formatInline
+                ): string {
+                    return '<u>'
+                        . $formatInline($match[1])
+                        . '</u>';
+                },
+                $nilai
+            ) ?? $nilai;
+
+            $nilai = preg_replace_callback(
+                '/~~(.+?)~~/s',
+                static function (
+                    array $match
+                ) use (
+                    &$formatInline
+                ): string {
+                    return '<del>'
+                        . $formatInline($match[1])
+                        . '</del>';
+                },
+                $nilai
+            ) ?? $nilai;
+
+            $nilai = preg_replace_callback(
+                '/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/s',
+                static function (
+                    array $match
+                ) use (
+                    &$formatInline
+                ): string {
+                    return '<em>'
+                        . $formatInline($match[1])
+                        . '</em>';
+                },
+                $nilai
+            ) ?? $nilai;
+
+            return $nilai;
+        };
+
+        $teks = $formatInline($teks);
+
+        if ($kode !== []) {
+            $teks = strtr(
+                $teks,
+                $kode
+            );
+        }
+
+        return nl2br(
+            $teks,
+            false
+        );
     }
 }
 
 if (! function_exists('konten_plain')) {
     function konten_plain(?string $teks): string
     {
-        $teks = strip_tags((string) $teks);
+        $teks = strip_tags(
+            (string) $teks
+        );
 
-        $teks = preg_replace('/\*\*(.+?)\*\*/s', '$1', $teks) ?? $teks;
-        $teks = preg_replace('/__(.+?)__/s', '$1', $teks) ?? $teks;
-        $teks = preg_replace('/~~(.+?)~~/s', '$1', $teks) ?? $teks;
-        $teks = preg_replace('/`(.+?)`/s', '$1', $teks) ?? $teks;
-        $teks = preg_replace('/(^|[^\\\\*])\*(?!\*)(.+?)(?<!\*)\*(?!\*)/s', '$1$2', $teks) ?? $teks;
+        $pola = [
+            '/\*\*\*(.+?)\*\*\*/s',
+            '/\*\*(.+?)\*\*/s',
+            '/__(.+?)__/s',
+            '/~~(.+?)~~/s',
+            '/`(.+?)`/s',
+            '/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/s',
+        ];
+
+        foreach ($pola as $regex) {
+            $teks = preg_replace(
+                $regex,
+                '$1',
+                $teks
+            ) ?? $teks;
+        }
 
         return trim($teks);
     }

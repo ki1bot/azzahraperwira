@@ -99,8 +99,8 @@ $urlKembali = base_url(
 
                 <?php if ($isi !== ''): ?>
                     <div class="text-base sm:text-lg text-gray-700 leading-8 break-words">
-                        <?= nl2br(
-                            esc($isi)
+                        <?= konten_format(
+                            $isi
                         ) ?>
                     </div>
                 <?php else: ?>

@@ -76,29 +76,6 @@ $buatUrlDetail = static function (
     );
 };
 
-$ringkasTeks = static function (
-    ?string $teks,
-    int $maksimal = 130
-): string {
-    $teks = trim(
-        strip_tags((string) $teks)
-    );
-
-    if ($teks === '') {
-        return '';
-    }
-
-    if (mb_strlen($teks) <= $maksimal) {
-        return $teks;
-    }
-
-    return mb_substr(
-        $teks,
-        0,
-        $maksimal
-    ) . '...';
-};
-
 $judulHalaman = $ambilKonten(
     $kontenMap,
     'judul_halaman',
@@ -166,7 +143,8 @@ $daftarBeritaBackend = array_values(
         ): bool {
             return ! in_array(
                 (string) (
-                    $item['kode_konten'] ?? ''
+                    $item['kode_konten']
+                    ?? ''
                 ),
                 $kodeKhusus,
                 true
@@ -206,12 +184,16 @@ $kegiatanListDefault = [
 <section class="bg-az-green py-16">
     <div class="container mx-auto px-6 text-center">
         <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            <?= esc($judulHalaman['judul']) ?>
+            <?= esc(
+                $judulHalaman['judul']
+            ) ?>
         </h1>
 
-        <p class="text-az-gold text-lg italic">
-            <?= esc($subjudulHalaman['isi']) ?>
-        </p>
+        <div class="text-az-gold text-lg italic">
+            <?= konten_format(
+                $subjudulHalaman['isi']
+            ) ?>
+        </div>
     </div>
 </section>
 
@@ -224,14 +206,16 @@ $kegiatanListDefault = [
                 </span>
 
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                    <?= esc($pengumuman['judul']) ?>
+                    <?= esc(
+                        $pengumuman['judul']
+                    ) ?>
                 </h2>
 
-                <p class="text-indigo-100 mb-6 leading-relaxed">
-                    <?= nl2br(
-                        esc($pengumuman['isi'])
+                <div class="text-indigo-100 mb-6 leading-relaxed">
+                    <?= konten_format(
+                        $pengumuman['isi']
                     ) ?>
-                </p>
+                </div>
 
                 <a
                     href="<?= esc(
@@ -245,11 +229,15 @@ $kegiatanListDefault = [
                     rel="noopener noreferrer"
                     class="inline-block bg-white text-indigo-900 font-bold px-8 py-3 rounded-full hover:bg-indigo-50 transition duration-300"
                 >
-                    <?= esc($brosur['judul']) ?>
+                    <?= esc(
+                        $brosur['judul']
+                    ) ?>
                 </a>
             </div>
 
-            <?php if ($pengumuman['gambar'] !== ''): ?>
+            <?php if (
+                $pengumuman['gambar'] !== ''
+            ): ?>
                 <div class="bg-white/10 rounded-2xl overflow-hidden flex items-center justify-center p-2">
                     <img
                         src="<?= esc(
@@ -272,18 +260,26 @@ $kegiatanListDefault = [
 
     <section>
         <h3 class="text-3xl font-bold text-az-green mb-10 text-center">
-            <?= esc($berita['judul']) ?>
+            <?= esc(
+                $berita['judul']
+            ) ?>
         </h3>
 
-        <?php if ($berita['isi'] !== ''): ?>
+        <?php if (
+            $berita['isi'] !== ''
+        ): ?>
             <div class="bg-white rounded-2xl shadow-lg p-8 text-gray-600 leading-relaxed mb-8">
-                <?= nl2br(
-                    esc($berita['isi'])
+                <?= konten_format(
+                    $berita['isi']
                 ) ?>
             </div>
         <?php endif; ?>
 
-        <?php if (! empty($daftarBeritaBackend)): ?>
+        <?php if (
+            ! empty(
+                $daftarBeritaBackend
+            )
+        ): ?>
             <div class="grid md:grid-cols-3 gap-8 items-stretch">
                 <?php foreach (
                     $daftarBeritaBackend
@@ -292,7 +288,8 @@ $kegiatanListDefault = [
                     <?php
                     $gambar = trim(
                         (string) (
-                            $item['gambar'] ?? ''
+                            $item['gambar']
+                            ?? ''
                         )
                     );
 
@@ -301,14 +298,18 @@ $kegiatanListDefault = [
                         : 'assets/img/informasi/'
                             . 'kegiatan_00001.jpg';
 
-                    $urlDetail = $buatUrlDetail($item);
+                    $urlDetail = $buatUrlDetail(
+                        $item
+                    );
                     ?>
 
                     <article class="h-full bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
                         <div class="relative w-full aspect-[4/3] bg-slate-100 overflow-hidden">
                             <img
                                 src="<?= esc(
-                                    base_url($gambar),
+                                    base_url(
+                                        $gambar
+                                    ),
                                     'attr'
                                 ) ?>"
                                 class="absolute inset-0 block w-full h-full object-cover object-center"
@@ -330,14 +331,24 @@ $kegiatanListDefault = [
                                 ) ?>
                             </h4>
 
-                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                                <?= esc(
-                                    $ringkasTeks(
-                                        $item['isi'] ?? '',
-                                        140
+                            <?php if (
+                                trim(
+                                    (string) (
+                                        $item['isi']
+                                        ?? ''
                                     )
-                                ) ?>
-                            </p>
+                                ) !== ''
+                            ): ?>
+                                <div
+                                    class="text-gray-600 text-sm leading-relaxed mb-4"
+                                    style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden;"
+                                >
+                                    <?= konten_format(
+                                        $item['isi']
+                                            ?? ''
+                                    ) ?>
+                                </div>
+                            <?php endif; ?>
 
                             <a
                                 href="<?= esc(
@@ -380,15 +391,21 @@ $kegiatanListDefault = [
 
                         <div class="p-6 flex flex-1 flex-col">
                             <span class="text-az-gold text-sm font-semibold uppercase">
-                                <?= esc($item['date']) ?>
+                                <?= esc(
+                                    $item['date']
+                                ) ?>
                             </span>
 
                             <h4 class="text-xl font-bold text-az-green mt-2 mb-3">
-                                <?= esc($item['title']) ?>
+                                <?= esc(
+                                    $item['title']
+                                ) ?>
                             </h4>
 
                             <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                                <?= esc($item['excerpt']) ?>
+                                <?= esc(
+                                    $item['excerpt']
+                                ) ?>
                             </p>
 
                             <span class="mt-auto pt-2 text-gray-400 font-bold">

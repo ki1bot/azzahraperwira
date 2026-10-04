@@ -214,54 +214,382 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
 
+  function escapeHtml(value) {
+    return value
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function sourceToEditorHtml(source) {
+    const value = String(source || "").replace(/\r\n?/g, "\n");
+    const definitions = [
+      {
+        marker: "***",
+        open: "<strong><em>",
+        close: "</em></strong>",
+        nested: true,
+      },
+      {
+        marker: "**",
+        open: "<strong>",
+        close: "</strong>",
+        nested: true,
+      },
+      {
+        marker: "__",
+        open: "<u>",
+        close: "</u>",
+        nested: true,
+      },
+      {
+        marker: "~~",
+        open: "<del>",
+        close: "</del>",
+        nested: true,
+      },
+      {
+        marker: "`",
+        open: "<code>",
+        close: "</code>",
+        nested: false,
+      },
+      {
+        marker: "*",
+        open: "<em>",
+        close: "</em>",
+        nested: true,
+      },
+    ];
+
+    function findClosing(text, marker, start) {
+      let position = start;
+
+      while (position < text.length) {
+        position = text.indexOf(marker, position);
+
+        if (position === -1) {
+          return -1;
+        }
+
+        if (
+          marker === "*" &&
+          (text[position - 1] === "*" || text[position + 1] === "*")
+        ) {
+          position += 1;
+          continue;
+        }
+
+        return position;
+      }
+
+      return -1;
+    }
+
+    function parse(text) {
+      let html = "";
+      let index = 0;
+
+      while (index < text.length) {
+        let matched = false;
+
+        for (const definition of definitions) {
+          if (!text.startsWith(definition.marker, index)) {
+            continue;
+          }
+
+          const contentStart = index + definition.marker.length;
+          const closing = findClosing(text, definition.marker, contentStart);
+
+          if (closing === -1) {
+            continue;
+          }
+
+          const inner = text.substring(contentStart, closing);
+          const content = definition.nested ? parse(inner) : escapeHtml(inner);
+
+          html += definition.open + content + definition.close;
+          index = closing + definition.marker.length;
+          matched = true;
+          break;
+        }
+
+        if (matched) {
+          continue;
+        }
+
+        const character = text[index];
+
+        html += character === "\n" ? "<br>" : escapeHtml(character);
+        index += 1;
+      }
+
+      return html;
+    }
+
+    return parse(value);
+  }
+
+  function wrapFormattedSource(value, marker) {
+    if (value === "") {
+      return "";
+    }
+
+    return value
+      .split("\n")
+      .map(function (line) {
+        return line === "" ? "" : marker + line + marker;
+      })
+      .join("\n");
+  }
+
+  function editorNodeToSource(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return (node.nodeValue || "").replace(/\u00a0/g, " ");
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      return "";
+    }
+
+    const element = node;
+    const tag = element.tagName.toUpperCase();
+
+    if (tag === "BR") {
+      return "\n";
+    }
+
+    let value = Array.from(element.childNodes).map(editorNodeToSource).join("");
+
+    if (tag === "STRONG" || tag === "B") {
+      value = wrapFormattedSource(value, "**");
+    } else if (tag === "EM" || tag === "I") {
+      value = wrapFormattedSource(value, "*");
+    } else if (tag === "U") {
+      value = wrapFormattedSource(value, "__");
+    } else if (tag === "DEL" || tag === "S" || tag === "STRIKE") {
+      value = wrapFormattedSource(value, "~~");
+    } else if (tag === "CODE") {
+      value = wrapFormattedSource(value, "`");
+    } else if (tag === "SPAN") {
+      const style = window.getComputedStyle(element);
+      const weight = Number.parseInt(style.fontWeight, 10);
+      const bold =
+        style.fontWeight === "bold" || (!Number.isNaN(weight) && weight >= 600);
+      const italic = style.fontStyle === "italic";
+      const decoration = style.textDecorationLine || style.textDecoration || "";
+
+      if (bold) {
+        value = wrapFormattedSource(value, "**");
+      }
+
+      if (italic) {
+        value = wrapFormattedSource(value, "*");
+      }
+
+      if (decoration.includes("underline")) {
+        value = wrapFormattedSource(value, "__");
+      }
+
+      if (decoration.includes("line-through")) {
+        value = wrapFormattedSource(value, "~~");
+      }
+    }
+
+    if (
+      (tag === "DIV" || tag === "P") &&
+      value !== "" &&
+      !value.endsWith("\n")
+    ) {
+      value += "\n";
+    }
+
+    return value;
+  }
+
   document
     .querySelectorAll("[data-editor-toolbar]")
     .forEach(function (toolbar) {
       const targetId = toolbar.getAttribute("data-editor-toolbar");
       const textarea = document.getElementById(targetId);
 
-      if (!textarea) {
+      if (!textarea || textarea.dataset.richEditorReady === "true") {
         return;
       }
 
+      const editor = document.createElement("div");
       const formatMap = {
-        bold: ["**", "**", "teks tebal"],
-        italic: ["*", "*", "teks miring"],
-        underline: ["__", "__", "teks bergaris bawah"],
-        strike: ["~~", "~~", "teks dicoret"],
+        bold: "bold",
+        italic: "italic",
+        underline: "underline",
+        strike: "strikeThrough",
       };
 
+      textarea.dataset.richEditorReady = "true";
+
+      editor.id = targetId + "-rich-editor";
+      editor.className = textarea.className;
+      editor.setAttribute("contenteditable", "true");
+      editor.setAttribute("role", "textbox");
+      editor.setAttribute("aria-multiline", "true");
+      editor.setAttribute("data-rich-editor", "true");
+      editor.setAttribute("data-placeholder", textarea.placeholder || "");
+      editor.style.overflowY = "auto";
+      editor.style.whiteSpace = "pre-wrap";
+      editor.innerHTML = sourceToEditorHtml(textarea.value);
+
+      Array.from(document.querySelectorAll("label")).forEach(function (label) {
+        if (label.htmlFor === targetId) {
+          label.htmlFor = editor.id;
+        }
+      });
+
+      textarea.hidden = true;
+      textarea.setAttribute("aria-hidden", "true");
+      textarea.tabIndex = -1;
+      textarea.parentNode.insertBefore(editor, textarea);
+
+      function selectionInsideEditor() {
+        const selection = window.getSelection();
+
+        if (!selection || selection.rangeCount === 0) {
+          return false;
+        }
+
+        const anchor = selection.anchorNode;
+
+        return anchor === editor || editor.contains(anchor);
+      }
+
+      function focusEditorAtEnd() {
+        editor.focus();
+
+        const selection = window.getSelection();
+        const range = document.createRange();
+
+        range.selectNodeContents(editor);
+        range.collapse(false);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+
+      function syncSource() {
+        let value = Array.from(editor.childNodes)
+          .map(editorNodeToSource)
+          .join("");
+
+        value = value
+          .replace(/\r\n?/g, "\n")
+          .replace(/\n{3,}/g, "\n\n")
+          .replace(/\n+$/g, "");
+
+        textarea.value = value;
+        textarea.dispatchEvent(
+          new Event("input", {
+            bubbles: true,
+          }),
+        );
+      }
+
+      function updateEmptyState() {
+        const empty = (editor.textContent || "").trim() === "";
+
+        editor.setAttribute("data-empty", empty ? "true" : "false");
+      }
+
+      function updateToolbarState() {
+        const inside = selectionInsideEditor();
+
+        toolbar.querySelectorAll("[data-format]").forEach(function (button) {
+          const format = button.getAttribute("data-format");
+          const command = formatMap[format];
+          let active = false;
+
+          if (inside && command) {
+            try {
+              active = document.queryCommandState(command);
+            } catch (error) {
+              active = false;
+            }
+          }
+
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      }
+
       toolbar.querySelectorAll("[data-format]").forEach(function (button) {
+        button.setAttribute("aria-pressed", "false");
+
+        button.addEventListener("mousedown", function (event) {
+          event.preventDefault();
+        });
+
         button.addEventListener("click", function () {
           const format = button.getAttribute("data-format");
-          const config = formatMap[format];
+          const command = formatMap[format];
 
-          if (!config) {
+          if (!command) {
             return;
           }
 
-          const start = textarea.selectionStart;
-          const end = textarea.selectionEnd;
-          const selected = textarea.value.substring(start, end);
-          const text = selected || config[2];
-          const replacement = config[0] + text + config[1];
+          if (!selectionInsideEditor()) {
+            focusEditorAtEnd();
+          }
 
-          textarea.value =
-            textarea.value.substring(0, start) +
-            replacement +
-            textarea.value.substring(end);
+          try {
+            document.execCommand("styleWithCSS", false, false);
+            document.execCommand(command, false, null);
+          } catch (error) {
+            return;
+          }
 
-          textarea.focus();
-          textarea.selectionStart = start + config[0].length;
-          textarea.selectionEnd = start + config[0].length + text.length;
-
-          textarea.dispatchEvent(
-            new Event("input", {
-              bubbles: true,
-            }),
-          );
+          syncSource();
+          updateEmptyState();
+          updateToolbarState();
+          editor.focus();
         });
       });
+
+      editor.addEventListener("input", function () {
+        syncSource();
+        updateEmptyState();
+        updateToolbarState();
+      });
+
+      editor.addEventListener("paste", function (event) {
+        event.preventDefault();
+
+        const clipboard = event.clipboardData || window.clipboardData;
+        const text = clipboard ? clipboard.getData("text/plain") : "";
+
+        document.execCommand("insertText", false, text);
+      });
+
+      editor.addEventListener("keyup", updateToolbarState);
+      editor.addEventListener("mouseup", updateToolbarState);
+      editor.addEventListener("focus", updateToolbarState);
+      editor.addEventListener("blur", function () {
+        syncSource();
+        updateEmptyState();
+      });
+
+      document.addEventListener("selectionchange", function () {
+        if (document.activeElement === editor || selectionInsideEditor()) {
+          updateToolbarState();
+        }
+      });
+
+      if (textarea.form) {
+        textarea.form.addEventListener("submit", function () {
+          syncSource();
+        });
+      }
+
+      updateEmptyState();
+      syncSource();
     });
 
   document

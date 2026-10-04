@@ -25,10 +25,20 @@ h6 {
   overflow-wrap: break-word;
 }
 
+#siteNavigation {
+  overflow: visible;
+}
+
 #mobile-menu {
-  max-height: calc(100dvh - 4rem);
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow: visible;
+}
+
+#unitLayananDropdown {
+  overflow: visible;
+}
+
+#unitLayananMenu {
+  overflow: visible;
 }
 
 @media (max-width: 767.98px) {
@@ -41,6 +51,18 @@ h6 {
   footer,
   .grid {
     min-width: 0;
+  }
+
+  #mobile-menu {
+    max-height: calc(100dvh - 4rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  #unitLayananMenu {
+    max-height: none;
+    overflow: visible;
   }
 
   .text-5xl,
@@ -88,6 +110,23 @@ h6 {
   footer a,
   footer p {
     overflow-wrap: anywhere;
+  }
+}
+
+@media (min-width: 768px) {
+  #mobile-menu {
+    max-height: none;
+    overflow: visible;
+    overscroll-behavior: auto;
+  }
+
+  #unitLayananDropdown {
+    overflow: visible;
+  }
+
+  #unitLayananMenu {
+    max-height: none;
+    overflow: visible;
   }
 }
 
