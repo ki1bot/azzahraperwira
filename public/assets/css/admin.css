@@ -1,3 +1,7 @@
+:root {
+  --admin-sidebar-width: min(18rem, calc(100vw - 3rem));
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -22,11 +26,17 @@ select {
   -webkit-tap-highlight-color: transparent;
 }
 
-#adminSidebar {
-  width: min(18rem, calc(100vw - 3rem));
-  transform: translateX(calc(-100% - 1px));
+#adminSidebarShell {
+  width: calc(var(--admin-sidebar-width) + 2.75rem);
+  transform: translateX(calc(0px - var(--admin-sidebar-width) - 1px));
   transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
+  pointer-events: none;
+}
+
+#adminSidebar {
+  width: var(--admin-sidebar-width);
+  pointer-events: auto;
 }
 
 #adminContent {
@@ -38,12 +48,14 @@ select {
 .admin-sidebar-handle {
   position: absolute;
   top: 0.75rem;
-  right: -2.75rem;
+  left: var(--admin-sidebar-width);
+  right: auto;
   width: 2.75rem;
   height: 2.75rem;
   border-left: 0;
   border-radius: 0 0.75rem 0.75rem 0;
   z-index: 60;
+  pointer-events: auto;
 }
 
 #adminSidebarToggle:focus-visible,
@@ -66,7 +78,7 @@ html.admin-sidebar-mobile-open body {
   overflow: hidden;
 }
 
-html.admin-sidebar-mobile-open #adminSidebar {
+html.admin-sidebar-mobile-open #adminSidebarShell {
   transform: translateX(0);
 }
 
@@ -127,8 +139,11 @@ html.admin-sidebar-mobile-open #mobileAdminBackdrop {
 }
 
 @media (min-width: 1024px) {
-  #adminSidebar {
-    width: 18rem;
+  :root {
+    --admin-sidebar-width: 18rem;
+  }
+
+  #adminSidebarShell {
     transform: translateX(0);
   }
 
@@ -136,8 +151,8 @@ html.admin-sidebar-mobile-open #mobileAdminBackdrop {
     margin-left: 18rem;
   }
 
-  html.admin-sidebar-closed #adminSidebar {
-    transform: translateX(-100%);
+  html.admin-sidebar-closed #adminSidebarShell {
+    transform: translateX(calc(0px - var(--admin-sidebar-width)));
   }
 
   html.admin-sidebar-closed #adminContent {
@@ -150,7 +165,7 @@ html.admin-sidebar-mobile-open #mobileAdminBackdrop {
     scroll-behavior: auto;
   }
 
-  #adminSidebar,
+  #adminSidebarShell,
   #adminContent,
   #mobileAdminBackdrop {
     transition: none;

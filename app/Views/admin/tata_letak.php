@@ -1,3 +1,4 @@
+
 <?php
 $judulHalaman = $judul ?? 'Admin';
 $namaAdmin = session()->get('nama_admin') ?? 'Admin';
@@ -118,7 +119,7 @@ $navClass = static function (bool $active): string {
 
     <link
         rel="stylesheet"
-        href="<?= base_url('assets/css/admin.css') ?>"
+        href="<?= base_url('assets/css/admin.css') ?>?v=20261010-unified-sidebar"
     >
 
     <script
@@ -134,11 +135,144 @@ $navClass = static function (bool $active): string {
         aria-hidden="true"
     ></div>
 
-    <aside
-        id="adminSidebar"
-        class="fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 bg-white"
-        aria-label="Sidebar admin"
+    <div
+        id="adminSidebarShell"
+        class="fixed inset-y-0 left-0 z-50"
     >
+        <aside
+            id="adminSidebar"
+            class="absolute inset-y-0 left-0 flex flex-col border-r border-slate-200 bg-white"
+            aria-label="Sidebar admin"
+        >
+            <div
+                id="adminSidebarHeader"
+                class="flex h-20 items-center border-b border-slate-100 px-5"
+            >
+                <a
+                    href="<?= base_url('admin/dashboard/index.php') ?>"
+                    class="min-w-0 flex-1"
+                    title="Dashboard Admin"
+                >
+                    <strong class="block truncate text-sm font-semibold text-slate-900">
+                        Az-Zahra Perwira
+                    </strong>
+
+                    <small class="mt-0.5 block text-xs text-slate-500">
+                        Admin Website
+                    </small>
+                </a>
+            </div>
+
+            <nav
+                class="flex-1 overflow-y-auto px-4 py-5"
+                aria-label="Navigasi admin"
+            >
+                <div class="mb-6">
+                    <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                        Utama
+                    </p>
+
+                    <?php $dashboardActive = $isActive('admin/dashboard'); ?>
+
+                    <a
+                        href="<?= base_url('admin/dashboard/index.php') ?>"
+                        class="<?= $navClass($dashboardActive) ?>"
+                        title="Dashboard"
+                    >
+                        <span class="flex w-5 shrink-0 justify-center <?= $dashboardActive ? 'text-az-green' : 'text-slate-400' ?>">
+                            <i
+                                class="fa fa-th-large"
+                                aria-hidden="true"
+                            ></i>
+                        </span>
+
+                        <span>
+                            Dashboard
+                        </span>
+                    </a>
+                </div>
+
+                <div class="mb-6">
+                    <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                        Konten Website
+                    </p>
+
+                    <div class="space-y-1">
+                        <?php foreach ($menuKonten as $menu): ?>
+                            <?php $menuActive = $isActive($menu['match']); ?>
+
+                            <a
+                                href="<?= base_url($menu['url']) ?>"
+                                class="<?= $navClass($menuActive) ?>"
+                                title="<?= esc($menu['label'], 'attr') ?>"
+                            >
+                                <span class="flex w-5 shrink-0 justify-center <?= $menuActive ? 'text-az-green' : 'text-slate-400' ?>">
+                                    <i
+                                        class="fa <?= esc($menu['icon'], 'attr') ?>"
+                                        aria-hidden="true"
+                                    ></i>
+                                </span>
+
+                                <span>
+                                    <?= esc($menu['label']) ?>
+                                </span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                        Unit Pendidikan
+                    </p>
+
+                    <div class="space-y-1">
+                        <?php foreach ($menuUnit as $menu): ?>
+                            <?php $menuActive = $isActive($menu['match']); ?>
+
+                            <a
+                                href="<?= base_url($menu['url']) ?>"
+                                class="<?= $navClass($menuActive) ?>"
+                                title="<?= esc($menu['label'], 'attr') ?>"
+                            >
+                                <span class="flex w-5 shrink-0 justify-center <?= $menuActive ? 'text-az-green' : 'text-slate-400' ?>">
+                                    <i
+                                        class="fa <?= esc($menu['icon'], 'attr') ?>"
+                                        aria-hidden="true"
+                                    ></i>
+                                </span>
+
+                                <span>
+                                    <?= esc($menu['label']) ?>
+                                </span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="border-t border-slate-100 p-4">
+                <a
+                    href="<?= site_url('home/beranda') ?>"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                    title="Lihat Website"
+                >
+                    <span class="flex w-5 shrink-0 justify-center text-slate-400">
+                        <i
+                            class="fa fa-external-link"
+                            aria-hidden="true"
+                        ></i>
+                    </span>
+
+                    <span>
+                        Lihat Website
+                    </span>
+                </a>
+            </div>
+        </aside>
+
         <button
             type="button"
             id="adminSidebarToggle"
@@ -154,135 +288,7 @@ $navClass = static function (bool $active): string {
                 aria-hidden="true"
             ></i>
         </button>
-
-        <div
-            id="adminSidebarHeader"
-            class="flex h-20 items-center border-b border-slate-100 px-5"
-        >
-            <a
-                href="<?= base_url('admin/dashboard/index.php') ?>"
-                class="min-w-0 flex-1"
-                title="Dashboard Admin"
-            >
-                <strong class="block truncate text-sm font-semibold text-slate-900">
-                    Az-Zahra Perwira
-                </strong>
-
-                <small class="mt-0.5 block text-xs text-slate-500">
-                    Admin Website
-                </small>
-            </a>
-        </div>
-
-        <nav
-            class="flex-1 overflow-y-auto px-4 py-5"
-            aria-label="Navigasi admin"
-        >
-            <div class="mb-6">
-                <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                    Utama
-                </p>
-
-                <?php $dashboardActive = $isActive('admin/dashboard'); ?>
-
-                <a
-                    href="<?= base_url('admin/dashboard/index.php') ?>"
-                    class="<?= $navClass($dashboardActive) ?>"
-                    title="Dashboard"
-                >
-                    <span class="flex w-5 shrink-0 justify-center <?= $dashboardActive ? 'text-az-green' : 'text-slate-400' ?>">
-                        <i
-                            class="fa fa-th-large"
-                            aria-hidden="true"
-                        ></i>
-                    </span>
-
-                    <span>
-                        Dashboard
-                    </span>
-                </a>
-            </div>
-
-            <div class="mb-6">
-                <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                    Konten Website
-                </p>
-
-                <div class="space-y-1">
-                    <?php foreach ($menuKonten as $menu): ?>
-                        <?php $menuActive = $isActive($menu['match']); ?>
-
-                        <a
-                            href="<?= base_url($menu['url']) ?>"
-                            class="<?= $navClass($menuActive) ?>"
-                            title="<?= esc($menu['label'], 'attr') ?>"
-                        >
-                            <span class="flex w-5 shrink-0 justify-center <?= $menuActive ? 'text-az-green' : 'text-slate-400' ?>">
-                                <i
-                                    class="fa <?= esc($menu['icon'], 'attr') ?>"
-                                    aria-hidden="true"
-                                ></i>
-                            </span>
-
-                            <span>
-                                <?= esc($menu['label']) ?>
-                            </span>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <div>
-                <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                    Unit Pendidikan
-                </p>
-
-                <div class="space-y-1">
-                    <?php foreach ($menuUnit as $menu): ?>
-                        <?php $menuActive = $isActive($menu['match']); ?>
-
-                        <a
-                            href="<?= base_url($menu['url']) ?>"
-                            class="<?= $navClass($menuActive) ?>"
-                            title="<?= esc($menu['label'], 'attr') ?>"
-                        >
-                            <span class="flex w-5 shrink-0 justify-center <?= $menuActive ? 'text-az-green' : 'text-slate-400' ?>">
-                                <i
-                                    class="fa <?= esc($menu['icon'], 'attr') ?>"
-                                    aria-hidden="true"
-                                ></i>
-                            </span>
-
-                            <span>
-                                <?= esc($menu['label']) ?>
-                            </span>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </nav>
-
-        <div class="border-t border-slate-100 p-4">
-            <a
-                href="<?= site_url('home/beranda') ?>"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                title="Lihat Website"
-            >
-                <span class="flex w-5 shrink-0 justify-center text-slate-400">
-                    <i
-                        class="fa fa-external-link"
-                        aria-hidden="true"
-                    ></i>
-                </span>
-
-                <span>
-                    Lihat Website
-                </span>
-            </a>
-        </div>
-    </aside>
+    </div>
 
     <div
         id="adminContent"
